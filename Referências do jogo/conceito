@@ -1,1 +1,11 @@
-O jogo será de terror. O intuito é ser um labirinto escuro na qual terá 2 personagens, um deles será o assasino e o outro o sobrevivente. 
+Sobre o cenario, será frames do labirinto escuro.
+Os personagens de cada jogador sera visto de cima do mapa.
+Não será possivel ver uma ao outro, somente quando estiverem próximos, conseguiram se ver.
+A iluminação sera de acordo com a visão do personagem (visão limitada), só tera luz no local onde a lanterna apontar.
+O assasino deixará rastros, eles irão durar por apenas um tempo. 
+O design sera pixelado.
+A trilha sonora será "Lavander town" 
+O assasino se parecerá com o personagem do panico.
+O sobrevivente sera semelhante a Sidney Prescott.
+
+
