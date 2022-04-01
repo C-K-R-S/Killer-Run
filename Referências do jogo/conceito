@@ -1,11 +1,13 @@
-Sobre o cenario, será frames do labirinto escuro.
-Os personagens de cada jogador sera visto de cima do mapa.
+Sobre o cenário, será frames do labirinto escuro.
+Os personagens de cada jogador será visto de cima do mapa.
 Não será possivel ver uma ao outro, somente quando estiverem próximos, conseguiram se ver.
-A iluminação sera de acordo com a visão do personagem (visão limitada), só tera luz no local onde a lanterna apontar.
+A iluminação será de acordo com a visão do personagem (visão limitada), só tera luz no local onde a lanterna apontar.
 O assasino deixará rastros, eles irão durar por apenas um tempo. 
-O design sera pixelado.
+O design será pixelado.
 A trilha sonora será "Lavander town" 
 O assasino se parecerá com o personagem do panico.
-O sobrevivente sera semelhante a Sidney Prescott.
-
+O sobrevivente será semelhante a Sidney Prescott.
+No final do jogo tera duas alternativas.
+1. Se o ganhador for o sobrevivente o cenario ira ficar colorido.
+2. Se o ganhador for o assasino o cenario ira ficar macabro, algo mais sangrento.
 
