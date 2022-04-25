@@ -68,6 +68,10 @@ cena1.create = function () {
   // Colisão
   ARCas.setCollisionByProperty({ collides: true });
 
+  player = this.physics.add.sprite(0, 0, "player");
+  player.setCollideWorldBounds(true);
+  
+
 };
 
 
