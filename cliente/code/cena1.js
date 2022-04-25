@@ -118,7 +118,7 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
-  
+
 
   // Animação do jogador 1: ficar parado
   this.anims.create({
@@ -203,12 +203,14 @@ cena1.update = function (time, delta) {
   }
   if (up.isDown) {
     player1.body.setVelocityY(-100);
+    player1.anims.play("up1", true);
   } else if (down.isDown) {
     player1.body.setVelocityY(100);
   } else {
     player1.body.setVelocityY(0);
   }
 };
+
 
 
 export { cena1 };
