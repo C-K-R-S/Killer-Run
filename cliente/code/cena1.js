@@ -51,6 +51,7 @@ cena1.create = function () {
   //colocando os mapas para funcionar
   const map = this.make.tilemap({ key: "map" });
   const tileset = map.addTilesetImage("assets", "tiles");
+  const ground = map.createStaticLayer("ground", tileset, 0, 0);
 };
 
 cena1.update = function () {};
