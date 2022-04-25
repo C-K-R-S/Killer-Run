@@ -119,7 +119,6 @@ cena1.create = function () {
     repeat: -1,
   });
 
-
   // Animação do jogador 1: ficar parado
   this.anims.create({
     key: "stopped1",
@@ -143,9 +142,9 @@ cena1.create = function () {
     fill: "#cccccc",
   });
   lifeText.setScrollFactor(0);
-  // Cena (960x960) maior que a tela (1920x1080)
-  this.cameras.main.setBounds(0, 0, 1920, 1080);
-  this.physics.world.setBounds(0, 0, 1920, 1080);
+  // Cena (960x960) maior que a tela (800x600)
+  this.cameras.main.setBounds(0, 0, 960, 960);
+  this.physics.world.setBounds(0, 0, 960, 960);
 
   // Câmera seguindo o personagem 1
   this.cameras.main.startFollow(player1);
