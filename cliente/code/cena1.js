@@ -1,7 +1,7 @@
 // Criar a cena 0
 const cena1 = new Phaser.Scene("Cena 1");
 
-var player;
+var player1;
 var player2;
 var timer;
 var timerText;
@@ -31,6 +31,7 @@ var tileset;
 var terreno;
 var ARCas;
 
+
 cena1.preload = function () {
   //carregamento de todos os sons do game
   this.load.audio("ambient", "../sounds/ambient.mp3");
@@ -41,7 +42,7 @@ cena1.preload = function () {
   this.load.tilemapTiledJSON("map", "../assets/map.json");
 
   //carregamento do personagem
-  this.load.spritesheet("player", "../assets/ghostface.png", {
+  this.load.spritesheet("player1", "../assets/ghostface.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
