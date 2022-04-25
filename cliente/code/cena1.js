@@ -40,7 +40,18 @@ cena1.preload = function () {
     frameHeight: 18,
   });
 };
-cena1.create = function () {};
+cena1.create = function () {
+  //musicas
+  //lose = this.sound.add("lose");
+  ambient = this.sound.add("ambient");
+  //musica ambient tocada em looping
+  ambient.play();
+  ambient.setLoop(true);
+
+  //colocando os mapas para funcionar
+  const map = this.make.tilemap({ key: "map" });
+  const tileset = map.addTilesetImage("assets", "tiles");
+};
 
 cena1.update = function () {};
 
