@@ -26,20 +26,27 @@ var physics;
 var time;
 var cameras;
 var socket;
+var map;
+var tileset;
+var terreno;
+var ARCas;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
   this.load.audio("ambient", "../sounds/ambient.mp3");
   //this.load.audio("lose", "../sounds/explode1.mp3");
+
   //carregamento dos mapas
-  this.load.tilemapTiledJSON("map", "../assets/map.json");
   this.load.image("tiles", "../assets/mapPeck.png");
+  this.load.tilemapTiledJSON("map", "../assets/map.json");
+
   //carregamento do personagem
   this.load.spritesheet("player", "../assets/ghostface.png", {
     frameWidth: 17.5,
     frameHeight: 18,
   });
 };
+
 cena1.create = function () {
   //musicas
   //lose = this.sound.add("lose");
@@ -48,10 +55,18 @@ cena1.create = function () {
   ambient.play();
   ambient.setLoop(true);
 
-  //colocando os mapas para funcionar
-  const map = this.make.tilemap({ key: "map" });
-  const tileset = map.addTilesetImage("assets", "tiles");
-  const ground = map.createStaticLayer("ground", tileset, 0, 0);
+  // Mapa
+  map = this.make.tilemap({ key: "map" });
+
+  // Tileset
+  tileset = map.addTilesetImage("terreno", "tiles");
+
+  // Camadas
+  terreno = map.createStaticLayer("terreno", tileset, 0, 0);
+  ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
+
+  // Colisão
+  ARCas.setCollisionByProperty({ collides: true });
 };
 
 cena1.update = function () {};
