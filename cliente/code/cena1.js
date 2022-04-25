@@ -42,8 +42,8 @@ cena1.preload = function () {
 
   //carregamento do personagem
   this.load.spritesheet("player", "../assets/ghostface.png", {
-    frameWidth: 17.5,
-    frameHeight: 18,
+    frameWidth: 64,
+    frameHeight: 64,
   });
 };
 
@@ -63,15 +63,13 @@ cena1.create = function () {
 
   // Camadas
   terreno = map.createStaticLayer("terreno", tileset, 0, 0);
+
+
   ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
+  player1 = this.physics.add.sprite(400, 300, "player1");
 
   // Colisão
   ARCas.setCollisionByProperty({ collides: true });
-
-  player = this.physics.add.sprite(0, 0, "player");
-  player.setCollideWorldBounds(true);
-  
-
 };
 
 
