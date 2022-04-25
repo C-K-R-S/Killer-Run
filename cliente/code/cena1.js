@@ -67,7 +67,9 @@ cena1.create = function () {
 
   // Colisão
   ARCas.setCollisionByProperty({ collides: true });
+
 };
+
 
 cena1.update = function () {};
 
