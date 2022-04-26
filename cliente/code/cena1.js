@@ -73,8 +73,8 @@ cena1.create = function () {
   terreno = map.createStaticLayer("terreno", tileset, 0, 0);
 
   ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
-  player1 = this.physics.add.sprite(-16, 16, "player1");
-  
+  player1 = this.physics.add.sprite(850, 50, "player1");
+
 
   // Personagens colidem com os limites da cena
   player1.setCollideWorldBounds(true);
@@ -142,7 +142,7 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
-  this.cameras.main.setZoom(5);
+   this.cameras.main.setZoom(3);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
 
@@ -152,10 +152,11 @@ cena1.create = function () {
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
-    .image(800 - 16, 16, "fullscreen", 0)
+    .image(800 -16, 16, "fullscreen", 0)
     .setOrigin(1, 0)
     .setInteractive()
     .setScrollFactor(0);
+  
 
   // Ao clicar no botão de tela cheia
   button.on(
