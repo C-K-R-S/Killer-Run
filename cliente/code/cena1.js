@@ -75,19 +75,17 @@ cena1.create = function () {
   ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
   player1 = this.physics.add.sprite(400, 300, "player1");
 
-  // Colisão
-  ARCas.setCollisionByProperty({ collides: true });
-
   // Personagens colidem com os limites da cena
   player1.setCollideWorldBounds(true);
 
   // Detecção de colisão: terreno
   terreno.setCollisionByProperty({ collides: true });
-  this.physics.add.collider(player1, terreno, this);
+  this.physics.add.collider(player1, terreno, null, null, this);
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
-  this.physics.add.collider(player1, ARCas, this);
+
+  this.physics.add.collider(player1, ARCas, null, null, this);
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
