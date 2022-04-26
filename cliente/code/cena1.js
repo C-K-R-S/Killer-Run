@@ -73,7 +73,8 @@ cena1.create = function () {
   terreno = map.createStaticLayer("terreno", tileset, 0, 0);
 
   ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
-  player1 = this.physics.add.sprite(400, 300, "player1");
+  player1 = this.physics.add.sprite(-16, 16, "player1");
+  
 
   // Personagens colidem com os limites da cena
   player1.setCollideWorldBounds(true);
@@ -141,8 +142,10 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
+  this.cameras.main.setZoom(5);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
+
 
   // Câmera seguindo o personagem 1
   this.cameras.main.startFollow(player1);
