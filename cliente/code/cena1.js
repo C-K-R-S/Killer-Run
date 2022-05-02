@@ -1,3 +1,6 @@
+// Importar a próxima cena
+import { cena2 } from "./cena2.js";
+
 // Criar a cena 0
 const cena1 = new Phaser.Scene("Cena 1");
 
