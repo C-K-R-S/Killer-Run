@@ -164,7 +164,7 @@ cena1.create = function () {
       start: 12,
       end: 15,
     }),
-    frameRate: 5,
+    frameRate: 10,
     repeat: -1,
   });
   // Animação do jogador 2: para baixo
@@ -174,7 +174,7 @@ cena1.create = function () {
       start: 0,
       end: 3,
     }),
-    frameRate: 5,
+    frameRate: 10,
     repeat: -1,
   });
 
