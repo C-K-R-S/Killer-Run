@@ -6,6 +6,8 @@ const cena1 = new Phaser.Scene("Cena 1");
 
 var player1;
 var player2;
+var vida_mocinha;
+var vida_assassino;
 var timer;
 var life = 0;
 var lifeText;
@@ -25,8 +27,7 @@ var ambient;
 var walk2;
 var lose;
 var button;
-var FKey;
-var jogador;
+var faca;
 var self;
 var physics;
 var time;
@@ -36,6 +37,7 @@ var map;
 var tileset;
 var terreno;
 var ARCas;
+var personagem_com_faca;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -46,11 +48,18 @@ cena1.preload = function () {
   this.load.image("tiles", "../assets/mapPeck.png");
   this.load.tilemapTiledJSON("map", "../assets/map.json");
 
-  //carregamento do personagem
+  //carregamento vilão
   this.load.spritesheet("player1", "../assets/ghostface.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
+
+  //carregamento mocinha
+  this.load.spritesheet("player2", "../assets/mocinha.png", {
+    frameWidth: 64,
+    frameHeight: 64,
+  });
+
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
     frameWidth: 64,
@@ -76,20 +85,26 @@ cena1.create = function () {
   terreno = map.createStaticLayer("terreno", tileset, 0, 0);
 
   ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
+  //Botando o assassino na tela
   player1 = this.physics.add.sprite(850, 50, "player1");
-
+  //Botando mocinha na tela
+  player2 = this.physics.add.sprite(850, 90, "player2");
+  personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
   player1.setCollideWorldBounds(true);
+  player2.setCollideWorldBounds(true);
 
   // Detecção de colisão: terreno
   terreno.setCollisionByProperty({ collides: true });
   this.physics.add.collider(player1, terreno, null, null, this);
+  this.physics.add.collider(player2, terreno, null, null, this);
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
 
   this.physics.add.collider(player1, ARCas, null, null, this);
+  this.physics.add.collider(player2, ARCas, null, null, this);
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -100,6 +115,17 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
+  // Animação do jogador 2: a esquerda
+  this.anims.create({
+    key: "left2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 4,
+      end: 7,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
   // Animação do jogador 1: a direita
   this.anims.create({
     key: "right1",
@@ -110,6 +136,17 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
+  // Animação do jogador 2: a direita
+  this.anims.create({
+    key: "right2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 8,
+      end: 11,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
   // Animação do jogador 1: para cima
   this.anims.create({
     key: "up1",
@@ -117,9 +154,34 @@ cena1.create = function () {
       start: 6,
       end: 7,
     }),
-    frameRate: 10,
+    frameRate: 5,
     repeat: -1,
   });
+  // Animação do jogador 2: para cima
+  this.anims.create({
+    key: "up2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 12,
+      end: 15,
+    }),
+    frameRate: 5,
+    repeat: -1,
+  });
+  // Animação do jogador 2: para baixo
+  this.anims.create({
+    key: "down2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 0,
+      end: 3,
+    }),
+    frameRate: 5,
+    repeat: -1,
+  });
+
+  //Definir vida vilão
+  vida_mocinha = 1;
+  vida_assassino = 3;
+  this.physics.add.collider(player2, player1, acerta_player1, null, this);
 
   // Animação do jogador 1: ficar parado
   this.anims.create({
@@ -131,6 +193,17 @@ cena1.create = function () {
     frameRate: 5,
     repeat: -1,
   });
+  // Animação do jogador 2: ficar parado
+  this.anims.create({
+    key: "stopped2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 0,
+      end: 0,
+    }),
+    frameRate: 5,
+    repeat: -1,
+  });
+
   // Direcionais do teclado
   cursors = this.input.keyboard.createCursorKeys();
   up = this.input.keyboard.addKey("W");
@@ -145,21 +218,19 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
-   this.cameras.main.setZoom(3);
+  this.cameras.main.setZoom(3);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
-
 
   // Câmera seguindo o personagem 1
   this.cameras.main.startFollow(player1);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
-    .image(800 -16, 16, "fullscreen", 0)
+    .image(800 - 16, 16, "fullscreen", 0)
     .setOrigin(1, 0)
     .setInteractive()
     .setScrollFactor(0);
-  
 
   // Ao clicar no botão de tela cheia
   button.on(
@@ -193,7 +264,11 @@ cena1.create = function () {
   );
 };
 
-cena1.update = function (time, delta) {
+cena1.update = function () {
+  if (vida_assassino === 0) {
+    player2.setFrame(8);
+  }
+
   // Controle do personagem 1: WASD
   if (left.isDown) {
     player1.body.setVelocityX(-100);
@@ -213,8 +288,45 @@ cena1.update = function (time, delta) {
   } else {
     player1.body.setVelocityY(0);
   }
+
+  // Controle do personagem 2: direcionais
+  if (cursors.left.isDown) {
+    player2.body.setVelocityX(-100);
+  } else if (cursors.right.isDown) {
+    player2.body.setVelocityX(100);
+  } else {
+    player2.body.setVelocity(0);
+  }
+
+  if (cursors.up.isDown) {
+    player2.body.setVelocityY(-100);
+  } else if (cursors.down.isDown) {
+    player2.body.setVelocityY(100);
+  } else {
+    player2.body.setVelocityY(0);
+  }
+
+  if (cursors.left.isDown) {
+    player2.anims.play("left2", true);
+  } else if (cursors.right.isDown) {
+    player2.anims.play("right2", true);
+  } else if (cursors.up.isDown) {
+    player2.anims.play("up2", true);
+  } else if (cursors.down.isDown) {
+    player2.anims.play("down2", true);
+  } else {
+    player2.anims.play("stopped2", true);
+  }
 };
 
-
+function acerta_player1(player2, player1) {
+  if (personagem_com_faca) {
+    vida_assassino--;
+    console.log(vida_assassino);
+  } else {
+    vida_mocinha--;
+    console.log(vida_mocinha);
+  }
+}
 
 export { cena1 };
