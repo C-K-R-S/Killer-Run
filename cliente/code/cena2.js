@@ -3,7 +3,7 @@ var cena2 = new Phaser.Scene("Cena 2");
 
 cena2.preload = function () {
   // Imagem de fundo
-  this.load.image("win", "../assets/julinha.png");
+  this.load.image("win", "./assets/julinha.png");
 };
 
 cena2.create = function () {

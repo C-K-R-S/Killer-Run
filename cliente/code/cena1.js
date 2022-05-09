@@ -41,21 +41,21 @@ var personagem_com_faca;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
-  this.load.audio("ambient", "../sounds/ambient.mp3");
-  //this.load.audio("lose", "../sounds/explode1.mp3");
+  this.load.audio("ambient", "./sounds/ambient.mp3");
+  //this.load.audio("lose", "./sounds/explode1.mp3");
 
   //carregamento dos mapas
-  this.load.image("tiles", "../assets/mapPeck.png");
-  this.load.tilemapTiledJSON("map", "../assets/map.json");
+  this.load.image("tiles", "./assets/mapPeck.png");
+  this.load.tilemapTiledJSON("map", "./assets/map.json");
 
   //carregamento vilão
-  this.load.spritesheet("player1", "../assets/ghostface.png", {
+  this.load.spritesheet("player1", "./assets/ghostface.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
 
   //carregamento mocinha
-  this.load.spritesheet("player2", "../assets/mocinha.png", {
+  this.load.spritesheet("player2", "./assets/mocinha.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
