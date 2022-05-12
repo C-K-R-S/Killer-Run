@@ -64,7 +64,7 @@ cena1.preload = function () {
     frameHeight: 64,
   });
    
-  this.load.spritesheet("faca", "../assets/faca.png", {
+  this.load.spritesheet("faca", "./assets/faca.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
