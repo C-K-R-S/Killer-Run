@@ -8,6 +8,10 @@ var player1;
 var player2;
 var vida_mocinha;
 var vida_assassino;
+var collectFaca
+var inventoryText2;
+var inventory2;
+var inventory;
 var timer;
 var life = 0;
 var lifeText;
@@ -59,6 +63,11 @@ cena1.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
+   
+  this.load.spritesheet("faca", "../assets/faca.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
@@ -70,10 +79,10 @@ cena1.preload = function () {
 cena1.create = function () {
   //musicas
   //lose = this.sound.add("lose");
-  ambient = this.sound.add("ambient");
+  // ambient = this.sound.add("ambient");
   //musica ambient tocada em looping
-  ambient.play();
-  ambient.setLoop(true);
+  // ambient.play();
+  // ambient.setLoop(true);
 
   // Mapa
   map = this.make.tilemap({ key: "map" });
@@ -88,7 +97,8 @@ cena1.create = function () {
   //Botando o assassino na tela
   player1 = this.physics.add.sprite(850, 50, "player1");
   //Botando mocinha na tela
-  player2 = this.physics.add.sprite(850, 90, "player2");
+  //player2 = this.physics.add.sprite(50, 530, "player2");
+  player2 = this.physics.add.sprite(850, 150, "player2");
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
@@ -105,6 +115,14 @@ cena1.create = function () {
 
   this.physics.add.collider(player1, ARCas, null, null, this);
   this.physics.add.collider(player2, ARCas, null, null, this);
+
+  //Colocando a faca no jogo
+  faca = this.physics.add.sprite(250, 220, "faca");
+
+  //Coletar faca
+  this.physics.add.overlap(player2, faca, collectFaca, null, this);
+
+
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -218,7 +236,7 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
-  this.cameras.main.setZoom(3);
+  //this.cameras.main.setZoom(3);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
 
@@ -265,6 +283,15 @@ cena1.create = function () {
 };
 
 cena1.update = function () {
+
+   function collectFaca(player2, faca) {
+     //chave some quando coletada
+     faca.disableBody(true, true);
+
+     inventory += 1;
+     inventoryText.setText(inventory);
+   }
+  
   if (vida_assassino === 0) {
     player2.setFrame(8);
   }
@@ -327,6 +354,9 @@ function acerta_player1(player2, player1) {
     vida_mocinha--;
     console.log(vida_mocinha);
   }
+
+ 
+
 }
 
 export { cena1 };
