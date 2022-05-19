@@ -8,7 +8,6 @@ var player1;
 var player2;
 var vida_mocinha;
 var vida_assassino;
-var collectFaca
 var inventoryText2;
 var inventory2;
 var inventory;
@@ -63,11 +62,11 @@ cena1.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
-   
+
   this.load.spritesheet("faca", "./assets/faca.png", {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
+    frameWidth: 32,
+    frameHeight: 32,
+  });
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
@@ -97,8 +96,8 @@ cena1.create = function () {
   //Botando o assassino na tela
   player1 = this.physics.add.sprite(850, 50, "player1");
   //Botando mocinha na tela
-  //player2 = this.physics.add.sprite(50, 530, "player2");
-  player2 = this.physics.add.sprite(850, 150, "player2");
+  player2 = this.physics.add.sprite(50, 530, "player2");
+  //player2 = this.physics.add.sprite(850, 150, "player2");
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
@@ -122,7 +121,6 @@ cena1.create = function () {
   //Coletar faca
   this.physics.add.overlap(player2, faca, collectFaca, null, this);
 
-
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -133,7 +131,7 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
-  // Animação do jogador 2: a esquerda
+  // Animação do jogador 2(sem faca): a esquerda
   this.anims.create({
     key: "left2",
     frames: this.anims.generateFrameNumbers("player2", {
@@ -154,7 +152,7 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
-  // Animação do jogador 2: a direita
+  // Animação do jogador 2(sem faca): a direita
   this.anims.create({
     key: "right2",
     frames: this.anims.generateFrameNumbers("player2", {
@@ -175,7 +173,7 @@ cena1.create = function () {
     frameRate: 5,
     repeat: -1,
   });
-  // Animação do jogador 2: para cima
+  // Animação do jogador 2(sem faca): para cima
   this.anims.create({
     key: "up2",
     frames: this.anims.generateFrameNumbers("player2", {
@@ -185,7 +183,7 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
-  // Animação do jogador 2: para baixo
+  // Animação do jogador 2(sem faca): para baixo
   this.anims.create({
     key: "down2",
     frames: this.anims.generateFrameNumbers("player2", {
@@ -211,7 +209,7 @@ cena1.create = function () {
     frameRate: 5,
     repeat: -1,
   });
-  // Animação do jogador 2: ficar parado
+  // Animação do jogador 2(sem faca): ficar parado
   this.anims.create({
     key: "stopped2",
     frames: this.anims.generateFrameNumbers("player2", {
@@ -283,15 +281,6 @@ cena1.create = function () {
 };
 
 cena1.update = function () {
-
-   function collectFaca(player2, faca) {
-     //chave some quando coletada
-     faca.disableBody(true, true);
-
-     inventory += 1;
-     inventoryText.setText(inventory);
-   }
-  
   if (vida_assassino === 0) {
     player2.setFrame(8);
   }
@@ -346,6 +335,14 @@ cena1.update = function () {
   }
 };
 
+function collectFaca(player2, faca) {
+  //faca some quando coletada
+  faca.disableBody(true, true);
+
+  inventory += 1;
+  //inventoryText.setText(inventory);
+}
+
 function acerta_player1(player2, player1) {
   if (personagem_com_faca) {
     vida_assassino--;
@@ -354,9 +351,6 @@ function acerta_player1(player2, player1) {
     vida_mocinha--;
     console.log(vida_mocinha);
   }
-
- 
-
 }
 
 export { cena1 };
