@@ -53,19 +53,19 @@ cena1.preload = function () {
 
   //carregamento vilão
   this.load.spritesheet("player1", "./assets/ghostface.png", {
-    frameWidth: 64,
-    frameHeight: 64,
+    frameWidth: 32,
+    frameHeight: 32,
   });
 
   //carregamento mocinha
   this.load.spritesheet("player2", "./assets/mocinha.png", {
-    frameWidth: 64,
-    frameHeight: 64,
+    frameWidth: 32,
+    frameHeight: 32,
   });
 
   this.load.spritesheet("faca", "./assets/faca.png", {
-    frameWidth: 32,
-    frameHeight: 32,
+    frameWidth: 16,
+    frameHeight: 16,
   });
 
   // Tela cheia
@@ -125,8 +125,8 @@ cena1.create = function () {
   this.anims.create({
     key: "left1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 0,
-      end: 0,
+      start: 5,
+      end: 5,
     }),
     frameRate: 10,
     repeat: -1,
@@ -146,8 +146,8 @@ cena1.create = function () {
   this.anims.create({
     key: "right1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 5,
-      end: 5,
+      start: 4,
+      end: 4,
     }),
     frameRate: 10,
     repeat: -1,
@@ -167,8 +167,8 @@ cena1.create = function () {
   this.anims.create({
     key: "up1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 6,
-      end: 7,
+      start: 3,
+      end: 3,
     }),
     frameRate: 5,
     repeat: -1,
@@ -203,8 +203,8 @@ cena1.create = function () {
   this.anims.create({
     key: "stopped1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 1,
-      end: 4,
+      start: 0,
+      end: 0,
     }),
     frameRate: 5,
     repeat: -1,
