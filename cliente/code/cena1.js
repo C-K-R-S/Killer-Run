@@ -6,6 +6,7 @@ const cena1 = new Phaser.Scene("Cena 1");
 
 var player1;
 var player2;
+var player3;
 var vida_mocinha;
 var vida_assassino;
 var inventoryText2;
@@ -76,6 +77,8 @@ cena1.preload = function () {
 };
 
 cena1.create = function () {
+  personagem_com_faca = false;
+
   //musicas
   //lose = this.sound.add("lose");
   // ambient = this.sound.add("ambient");
@@ -135,8 +138,19 @@ cena1.create = function () {
   this.anims.create({
     key: "left2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 4,
-      end: 7,
+      start: 23,
+      end: 25,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  //Animação do jogador 2(com faca): a esquerda
+  this.anims.create({
+    key: "left2-com-faca",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 8,
+      end: 10,
     }),
     frameRate: 10,
     repeat: -1,
@@ -156,8 +170,19 @@ cena1.create = function () {
   this.anims.create({
     key: "right2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 8,
-      end: 11,
+      start: 20,
+      end: 22,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do jogador 2(com faca): a direita
+  this.anims.create({
+    key: "right2-com-faca",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 5,
+      end: 7,
     }),
     frameRate: 10,
     repeat: -1,
@@ -177,18 +202,41 @@ cena1.create = function () {
   this.anims.create({
     key: "up2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 12,
-      end: 15,
+      start: 26,
+      end: 29,
     }),
     frameRate: 10,
     repeat: -1,
   });
+
+  // Animação do jogador 2(com faca): para cima
+  this.anims.create({
+    key: "up2-com-faca",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 11,
+      end: 14,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
   // Animação do jogador 2(sem faca): para baixo
   this.anims.create({
     key: "down2",
     frames: this.anims.generateFrameNumbers("player2", {
+      start: 15,
+      end: 19,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do jogador 2(com faca): para baixo
+  this.anims.create({
+    key: "down2-com-faca",
+    frames: this.anims.generateFrameNumbers("player2", {
       start: 0,
-      end: 3,
+      end: 4,
     }),
     frameRate: 10,
     repeat: -1,
@@ -213,10 +261,21 @@ cena1.create = function () {
   this.anims.create({
     key: "stopped2",
     frames: this.anims.generateFrameNumbers("player2", {
+      start: 15,
+      end: 15,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do jogador 2(sem faca): ficar parado
+  this.anims.create({
+    key: "stopped2-com-faca",
+    frames: this.anims.generateFrameNumbers("player2", {
       start: 0,
       end: 0,
     }),
-    frameRate: 5,
+    frameRate: 10,
     repeat: -1,
   });
 
@@ -323,15 +382,33 @@ cena1.update = function () {
   }
 
   if (cursors.left.isDown) {
-    player2.anims.play("left2", true);
+    if (personagem_com_faca) {
+      player2.anims.play("left2-com-faca", true);
+    } else {
+      player2.anims.play("left2", true);
+    }
   } else if (cursors.right.isDown) {
-    player2.anims.play("right2", true);
-  } else if (cursors.up.isDown) {
-    player2.anims.play("up2", true);
-  } else if (cursors.down.isDown) {
-    player2.anims.play("down2", true);
+    if (personagem_com_faca) {
+      player2.anims.play("right2-com-faca", true);
+    } else {
+      player2.anims.play("right2", true);
+    }
+    } else if (cursors.up.isDown) {
+    if (personagem_com_faca) {
+      player2.anims.play("up2-com-faca", true);
+    } else {
+      player2.anims.play("up2", true);
+    }
+     } else if (cursors.down.isDown) {
+    if (personagem_com_faca) {
+      player2.anims.play("down2-com-faca", true);
+    } else {
+      player2.anims.play("down2", true);
+    }
   } else {
-    player2.anims.play("stopped2", true);
+    if (personagem_com_faca) { player2.anims.play("stopped2-com-faca", true); } else {
+      player2.anims.play("stopped2", true)
+    }
   }
 };
 
@@ -340,7 +417,7 @@ function collectFaca(player2, faca) {
   faca.disableBody(true, true);
 
   inventory += 1;
-  //inventoryText.setText(inventory);
+  personagem_com_faca = true;
 }
 
 function acerta_player1(player2, player1) {
