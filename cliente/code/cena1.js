@@ -7,6 +7,7 @@ const cena1 = new Phaser.Scene("Cena 1");
 var player1;
 var player2;
 var player3;
+var pause;
 var vida_mocinha;
 var vida_assassino;
 var inventoryText2;
@@ -25,6 +26,7 @@ var right;
 var left;
 var up;
 var down;
+var killed;
 var wall;
 var walk;
 var ambient;
@@ -257,6 +259,17 @@ cena1.create = function () {
     frameRate: 5,
     repeat: -1,
   });
+  // Animação do jogador 1: ficar parado
+  this.anims.create({
+    key: "killed1",
+    frames: this.anims.generateFrameNumbers("player1", {
+      start: 6,
+      end: 6,
+    }),
+    frameRate: 5,
+    repeat: -1,
+  });
+
   // Animação do jogador 2(sem faca): ficar parado
   this.anims.create({
     key: "stopped2",
@@ -340,31 +353,41 @@ cena1.create = function () {
 };
 
 cena1.update = function () {
+  if (vida_mocinha === 0) {
+    this.scene.start(cena2);
+  }
+
   if (vida_assassino === 0) {
-    player2.setFrame(8);
+    player2.setFrame(6);
   }
 
   // Controle do personagem 1: WASD
-  if (left.isDown) {
-    player1.body.setVelocityX(-100);
-    player1.anims.play("left1", true);
-  } else if (right.isDown) {
-    player1.body.setVelocityX(100);
-    player1.anims.play("right1", true);
-  } else {
+  if (vida_assassino > 0) {
+    if (left.isDown) {
+      player1.body.setVelocityX(-100);
+      player1.anims.play("left1", true);
+    } else if (right.isDown) {
+      player1.body.setVelocityX(100);
+      player1.anims.play("right1", true);
+    } else {
+      player1.body.setVelocity(0);
+      player1.anims.play("stopped1", true);
+    }
+    if (up.isDown) {
+      player1.body.setVelocityY(-100);
+      player1.anims.play("up1", true);
+    } else if (down.isDown) {
+      player1.body.setVelocityY(100);
+    } else {
+      player1.body.setVelocityY(0);
+    }
+  }
+  if (vida_assassino === 0) {
     player1.body.setVelocity(0);
-    player1.anims.play("stopped1", true);
-  }
-  if (up.isDown) {
-    player1.body.setVelocityY(-100);
-    player1.anims.play("up1", true);
-  } else if (down.isDown) {
-    player1.body.setVelocityY(100);
-  } else {
-    player1.body.setVelocityY(0);
-  }
+    player1.anims.play("killed1", true)
+}
 
-  // Controle do personagem 2: direcionais
+// Controle do personagem 2: direcionais
   if (cursors.left.isDown) {
     player2.body.setVelocityX(-100);
   } else if (cursors.right.isDown) {
@@ -393,21 +416,23 @@ cena1.update = function () {
     } else {
       player2.anims.play("right2", true);
     }
-    } else if (cursors.up.isDown) {
+  } else if (cursors.up.isDown) {
     if (personagem_com_faca) {
       player2.anims.play("up2-com-faca", true);
     } else {
       player2.anims.play("up2", true);
     }
-     } else if (cursors.down.isDown) {
+  } else if (cursors.down.isDown) {
     if (personagem_com_faca) {
       player2.anims.play("down2-com-faca", true);
     } else {
       player2.anims.play("down2", true);
     }
   } else {
-    if (personagem_com_faca) { player2.anims.play("stopped2-com-faca", true); } else {
-      player2.anims.play("stopped2", true)
+    if (personagem_com_faca) {
+      player2.anims.play("stopped2-com-faca", true);
+    } else {
+      player2.anims.play("stopped2", true);
     }
   }
 };
