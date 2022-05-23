@@ -1,5 +1,7 @@
 // Importar a próxima cena
 import { cena2 } from "./cena2.js";
+import { cena3 } from "./cena3.js";
+
 
 // Criar a cena 0
 const cena1 = new Phaser.Scene("Cena 1");
@@ -83,10 +85,10 @@ cena1.create = function () {
 
   //musicas
   //lose = this.sound.add("lose");
-  // ambient = this.sound.add("ambient");
+   ambient = this.sound.add("ambient");
   //musica ambient tocada em looping
-  // ambient.play();
-  // ambient.setLoop(true);
+   ambient.play();
+   ambient.setLoop(true);
 
   // Mapa
   map = this.make.tilemap({ key: "map" });
@@ -101,8 +103,8 @@ cena1.create = function () {
   //Botando o assassino na tela
   player1 = this.physics.add.sprite(850, 50, "player1");
   //Botando mocinha na tela
-  player2 = this.physics.add.sprite(50, 530, "player2");
-  //player2 = this.physics.add.sprite(850, 150, "player2");
+  //player2 = this.physics.add.sprite(50, 530, "player2");
+  player2 = this.physics.add.sprite(850, 150, "player2");
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
@@ -306,7 +308,7 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
-  //this.cameras.main.setZoom(3);
+  this.cameras.main.setZoom(3);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
 
@@ -359,6 +361,8 @@ cena1.update = function () {
 
   if (vida_assassino === 0) {
     player2.setFrame(6);
+    this.scene.start(cena3)
+
   }
 
   // Controle do personagem 1: WASD
