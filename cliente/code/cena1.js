@@ -103,8 +103,8 @@ cena1.create = function () {
   //Botando o assassino na tela
   player1 = this.physics.add.sprite(850, 50, "player1");
   //Botando mocinha na tela
-  //player2 = this.physics.add.sprite(50, 530, "player2");
-  player2 = this.physics.add.sprite(850, 150, "player2");
+  player2 = this.physics.add.sprite(50, 530, "player2");
+  //player2 = this.physics.add.sprite(850, 150, "player2");
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
