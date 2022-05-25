@@ -98,13 +98,12 @@ cena1.create = function () {
 
   // Camadas
   terreno = map.createStaticLayer("terreno", tileset, 0, 0);
-
-  ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
-  //Botando o assassino na tela
+ ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
+ 
+  //spawn
   player1 = this.physics.add.sprite(850, 50, "player1");
-  //Botando mocinha na tela
   player2 = this.physics.add.sprite(50, 530, "player2");
-  //player2 = this.physics.add.sprite(850, 150, "player2");
+ 
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
@@ -122,7 +121,7 @@ cena1.create = function () {
   this.physics.add.collider(player1, ARCas, null, null, this);
   this.physics.add.collider(player2, ARCas, null, null, this);
 
-  //Colocando a faca no jogo
+  //spawn faca
   faca = this.physics.add.sprite(250, 220, "faca");
 
   //Coletar faca
@@ -356,11 +355,13 @@ cena1.create = function () {
 
 cena1.update = function () {
   if (vida_mocinha === 0) {
+    ambient.stop();
     this.scene.start(cena2);
   }
 
   if (vida_assassino === 0) {
     player2.setFrame(6);
+    ambient.stop();
     this.scene.start(cena3)
 
   }
