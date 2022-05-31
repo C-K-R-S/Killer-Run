@@ -97,8 +97,8 @@ cena1.create = function () {
   tileset = map.addTilesetImage("terreno", "tiles");
 
   // Camadas
-  terreno = map.createStaticLayer("terreno", tileset, 0, 0);
- ARCas = map.createStaticLayer("ARCas", tileset, 0, 0);
+  terreno = map.createLayer("terreno", tileset, 0, 0);
+ ARCas = map.createLayer("ARCas", tileset, 0, 0);
  
   //spawn
   player1 = this.physics.add.sprite(850, 50, "player1");
