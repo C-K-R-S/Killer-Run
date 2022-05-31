@@ -3,9 +3,10 @@ const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server, {
   cors: {
-    origins: ["http://killerrun.ifsc.cloud/", "https://*.gitpod.io"]
+    origins: ["http://killerrun.ifsc.cloud/", "https://*.gitpod.io"],
   },
-});const PORT = process.env.PORT || 3000;
+});
+const PORT = process.env.PORT || 3000;
 var jogadores = {
   primeiro: undefined,
   segundo: undefined,
@@ -55,14 +56,3 @@ io.on("connection", function (socket) {
 
 app.use(express.static("./"));
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
-
-
-
-
-
-//const express = require("express");
-//const app = express();
-//const PORT = process.env.PORT || 3000;
-
-//app.use(express.static("./cliente"));
-//app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
