@@ -2,7 +2,6 @@
 import { cena2 } from "./cena2.js";
 import { cena3 } from "./cena3.js";
 
-
 // Criar a cena 0
 const cena1 = new Phaser.Scene("Cena 1");
 
@@ -36,7 +35,6 @@ var walk2;
 var lose;
 var button;
 var faca;
-var self;
 var physics;
 var time;
 var cameras;
@@ -46,6 +44,8 @@ var tileset;
 var terreno;
 var ARCas;
 var personagem_com_faca;
+var jogador;
+var frame;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -85,10 +85,10 @@ cena1.create = function () {
 
   //musicas
   //lose = this.sound.add("lose");
-   ambient = this.sound.add("ambient");
+  ambient = this.sound.add("ambient");
   //musica ambient tocada em looping
-   ambient.play();
-   ambient.setLoop(true);
+  ambient.play();
+  ambient.setLoop(true);
 
   // Mapa
   map = this.make.tilemap({ key: "map" });
@@ -98,28 +98,28 @@ cena1.create = function () {
 
   // Camadas
   terreno = map.createLayer("terreno", tileset, 0, 0);
- ARCas = map.createLayer("ARCas", tileset, 0, 0);
- 
+  ARCas = map.createLayer("ARCas", tileset, 0, 0);
+
   //spawn
   player1 = this.physics.add.sprite(850, 50, "player1");
   player2 = this.physics.add.sprite(50, 530, "player2");
- 
+
   personagem_com_faca = false;
 
   // Personagens colidem com os limites da cena
-  player1.setCollideWorldBounds(true);
-  player2.setCollideWorldBounds(true);
+  //player1.setCollideWorldBounds(true);
+  //player2.setCollideWorldBounds(true);
 
   // Detecção de colisão: terreno
-  terreno.setCollisionByProperty({ collides: true });
-  this.physics.add.collider(player1, terreno, null, null, this);
-  this.physics.add.collider(player2, terreno, null, null, this);
+  // terreno.setCollisionByProperty({ collides: true });
+  //this.physics.add.collider(player1, terreno, null, null, this);
+  //this.physics.add.collider(player2, terreno, null, null, this);
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
 
-  this.physics.add.collider(player1, ARCas, null, null, this);
-  this.physics.add.collider(player2, ARCas, null, null, this);
+  //this.physics.add.collider(player1, ARCas, null, null, this);
+  //this.physics.add.collider(player2, ARCas, null, null, this);
 
   //spawn faca
   faca = this.physics.add.sprite(250, 220, "faca");
@@ -312,7 +312,7 @@ cena1.create = function () {
   this.physics.world.setBounds(0, 0, 960, 960);
 
   // Câmera seguindo o personagem 1
-  this.cameras.main.startFollow(player1);
+  //this.cameras.main.startFollow(player1);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
@@ -351,6 +351,130 @@ cena1.create = function () {
     },
     this
   );
+
+  // Conectar no servidor via WebSocket
+  socket = io();
+
+  // Disparar evento quando jogador entrar na partida
+  var physics = this.physics;
+  var cameras = this.cameras;
+  var time = this.time;
+
+  socket.on("jogadores", function (jogadores) {
+    if (jogadores.primeiro === socket.id) {
+      // Define jogador como o primeiro
+      jogador = 1;
+
+      // Personagens colidem com os limites da cena
+      player1.setCollideWorldBounds(true);
+      // Detecção de colisão: terreno
+      terreno.setCollisionByProperty({ collides: true });
+      physics.add.collider(player1, terreno, null, null, this);
+      physics.add.collider(player2, terreno, null, null, this);
+
+      // Detecção de colisão e disparo de evento: ARCas
+      physics.add.collider(player1, ARCas, null, null, this);
+
+      // Câmera seguindo o personagem 1
+      cameras.main.startFollow(player1);
+
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+        })
+        .catch((error) => console.log(error));
+    } else if (jogadores.segundo === socket.id) {
+      // Define jogador como o segundo
+      jogador = 2;
+
+      // Personagens colidem com os limites da cena
+      player2.setCollideWorldBounds(true);
+
+      // Detecção de colisão: terreno
+      physics.add.collider(player2, terreno, null, null, this);
+
+      // Detecção de colisão e disparo de evento: ARCas
+      physics.add.collider(player2, ARCas, null, null, this);
+
+      // Câmera seguindo o personagem 2
+      cameras.main.startFollow(player2);
+
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+          localConnection = new RTCPeerConnection(ice_servers);
+          midias
+            .getTracks()
+            .forEach((track) => localConnection.addTrack(track, midias));
+          localConnection.onicecandidate = ({ candidate }) => {
+            candidate &&
+              socket.emit("candidate", jogadores.primeiro, candidate);
+          };
+          console.log(midias);
+          localConnection.ontrack = ({ streams: [midias] }) => {
+            audio.srcObject = midias;
+          };
+          localConnection
+            .createOffer()
+            .then((offer) => localConnection.setLocalDescription(offer))
+            .then(() => {
+              socket.emit(
+                "offer",
+                jogadores.primeiro,
+                localConnection.localDescription
+              );
+            });
+        })
+        .catch((error) => console.log(error));
+    }
+
+    // Os dois jogadores estão conectados
+    console.log(jogadores);
+  });
+
+  socket.on("offer", (socketId, description) => {
+    remoteConnection = new RTCPeerConnection(ice_servers);
+    midias
+      .getTracks()
+      .forEach((track) => remoteConnection.addTrack(track, midias));
+    remoteConnection.onicecandidate = ({ candidate }) => {
+      candidate && socket.emit("candidate", socketId, candidate);
+    };
+    remoteConnection.ontrack = ({ streams: [midias] }) => {
+      audio.srcObject = midias;
+    };
+    remoteConnection
+      .setRemoteDescription(description)
+      .then(() => remoteConnection.createAnswer())
+      .then((answer) => remoteConnection.setLocalDescription(answer))
+      .then(() => {
+        socket.emit("answer", socketId, remoteConnection.localDescription);
+      });
+  });
+
+  socket.on("answer", (description) => {
+    localConnection.setRemoteDescription(description);
+  });
+
+  socket.on("candidate", (candidate) => {
+    const conn = localConnection || remoteConnection;
+    conn.addIceCandidate(new RTCIceCandidate(candidate));
+  });
+
+  // Desenhar o outro jogador
+  socket.on("desenharOutroJogador", ({ frame, x, y }) => {
+    if (jogador === 1) {
+      player2.setFrame(frame);
+      player2.x = x;
+      player2.y = y;
+    } else if (jogador === 2) {
+      player1.setFrame(frame);
+      player1.x = x;
+      player1.y = y;
+    }
+  });
 };
 
 cena1.update = function () {
@@ -362,83 +486,104 @@ cena1.update = function () {
   if (vida_assassino === 0) {
     player2.setFrame(6);
     ambient.stop();
-    this.scene.start(cena3)
-
+    this.scene.start(cena3);
   }
 
-  // Controle do personagem 1: WASD
-  if (vida_assassino > 0) {
-    if (left.isDown) {
-      player1.body.setVelocityX(-100);
-      player1.anims.play("left1", true);
-    } else if (right.isDown) {
-      player1.body.setVelocityX(100);
-      player1.anims.play("right1", true);
-    } else {
+  if (jogador === 1) {
+    // Controle do personagem 1: WASD
+    if (vida_assassino > 0) {
+      if (left.isDown) {
+        player1.body.setVelocityX(-100);
+        player1.anims.play("left1", true);
+      } else if (right.isDown) {
+        player1.body.setVelocityX(100);
+        player1.anims.play("right1", true);
+      } else {
+        player1.body.setVelocity(0);
+        player1.anims.play("stopped1", true);
+      }
+      if (up.isDown) {
+        player1.body.setVelocityY(-100);
+        player1.anims.play("up1", true);
+      } else if (down.isDown) {
+        player1.body.setVelocityY(100);
+      } else {
+        player1.body.setVelocityY(0);
+      }
+    }
+    if (vida_assassino === 0) {
       player1.body.setVelocity(0);
-      player1.anims.play("stopped1", true);
+      player1.anims.play("killed1", true);
     }
-    if (up.isDown) {
-      player1.body.setVelocityY(-100);
-      player1.anims.play("up1", true);
-    } else if (down.isDown) {
-      player1.body.setVelocityY(100);
+    try {
+      frame = player1.anims.currentFrame.index;
+    } catch (e) {
+      frame = 0;
+    }
+    socket.emit("estadoDoJogador", {
+      frame: frame,
+      x: player1.body.x,
+      y: player1.body.y,
+    });
+  } else if (jogador === 2) {
+    // Controle do personagem 2: direcionais
+    if (cursors.left.isDown) {
+      player2.body.setVelocityX(-100);
+    } else if (cursors.right.isDown) {
+      player2.body.setVelocityX(100);
     } else {
-      player1.body.setVelocityY(0);
+      player2.body.setVelocity(0);
     }
-  }
-  if (vida_assassino === 0) {
-    player1.body.setVelocity(0);
-    player1.anims.play("killed1", true)
-}
 
-// Controle do personagem 2: direcionais
-  if (cursors.left.isDown) {
-    player2.body.setVelocityX(-100);
-  } else if (cursors.right.isDown) {
-    player2.body.setVelocityX(100);
-  } else {
-    player2.body.setVelocity(0);
-  }
+    if (cursors.up.isDown) {
+      player2.body.setVelocityY(-100);
+    } else if (cursors.down.isDown) {
+      player2.body.setVelocityY(100);
+    } else {
+      player2.body.setVelocityY(0);
+    }
 
-  if (cursors.up.isDown) {
-    player2.body.setVelocityY(-100);
-  } else if (cursors.down.isDown) {
-    player2.body.setVelocityY(100);
-  } else {
-    player2.body.setVelocityY(0);
-  }
-
-  if (cursors.left.isDown) {
-    if (personagem_com_faca) {
-      player2.anims.play("left2-com-faca", true);
+    if (cursors.left.isDown) {
+      if (personagem_com_faca) {
+        player2.anims.play("left2-com-faca", true);
+      } else {
+        player2.anims.play("left2", true);
+      }
+    } else if (cursors.right.isDown) {
+      if (personagem_com_faca) {
+        player2.anims.play("right2-com-faca", true);
+      } else {
+        player2.anims.play("right2", true);
+      }
+    } else if (cursors.up.isDown) {
+      if (personagem_com_faca) {
+        player2.anims.play("up2-com-faca", true);
+      } else {
+        player2.anims.play("up2", true);
+      }
+    } else if (cursors.down.isDown) {
+      if (personagem_com_faca) {
+        player2.anims.play("down2-com-faca", true);
+      } else {
+        player2.anims.play("down2", true);
+      }
     } else {
-      player2.anims.play("left2", true);
+      if (personagem_com_faca) {
+        player2.anims.play("stopped2-com-faca", true);
+      } else {
+        player2.anims.play("stopped2", true);
+      }
     }
-  } else if (cursors.right.isDown) {
-    if (personagem_com_faca) {
-      player2.anims.play("right2-com-faca", true);
-    } else {
-      player2.anims.play("right2", true);
+    try {
+      frame = player2.anims.currentFrame.index;
+    } catch (e) {
+      frame = 0;
     }
-  } else if (cursors.up.isDown) {
-    if (personagem_com_faca) {
-      player2.anims.play("up2-com-faca", true);
-    } else {
-      player2.anims.play("up2", true);
-    }
-  } else if (cursors.down.isDown) {
-    if (personagem_com_faca) {
-      player2.anims.play("down2-com-faca", true);
-    } else {
-      player2.anims.play("down2", true);
-    }
-  } else {
-    if (personagem_com_faca) {
-      player2.anims.play("stopped2-com-faca", true);
-    } else {
-      player2.anims.play("stopped2", true);
-    }
+    socket.emit("estadoDoJogador", {
+      frame: frame,
+      x: player2.body.x,
+      y: player2.body.y,
+    });
   }
 };
 
