@@ -353,7 +353,8 @@ cena1.create = function () {
   );
 
   // Conectar no servidor via WebSocket
-  socket = io();
+  socket = io("https://rocky-anchorage-08006.herokuapp.com");
+  
 
   // Disparar evento quando jogador entrar na partida
   var physics = this.physics;
