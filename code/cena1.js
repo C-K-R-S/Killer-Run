@@ -517,14 +517,14 @@ cena1.update = function () {
       player1.anims.play("killed1", true);
     }
     try {
-      frame = player1.anims.currentFrame.index;
+      frame = player1.anims.getFrameName();
     } catch (e) {
       frame = 0;
     }
     socket.emit("estadoDoJogador", {
       frame: frame,
-      x: player1.body.x,
-      y: player1.body.y,
+      x: player1.body.x + 16,
+      y: player1.body.y + 16,
     });
   } else if (jogador === 2) {
     // Controle do personagem 2: direcionais
@@ -576,14 +576,14 @@ cena1.update = function () {
       }
     }
     try {
-      frame = player2.anims.currentFrame.index;
+      frame = player2.anims.getFrameName();
     } catch (e) {
       frame = 0;
     }
     socket.emit("estadoDoJogador", {
       frame: frame,
-      x: player2.body.x,
-      y: player2.body.y,
+      x: player2.body.x + 16,
+      y: player2.body.y + 16,
     });
   }
 };
