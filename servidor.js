@@ -52,6 +52,10 @@ io.on("connection", function (socket) {
   socket.on("estadoDoJogador", function (estado) {
     socket.broadcast.emit("desenharOutroJogador", estado);
   });
+
+  socket.on("inventario", function (estado) {
+    socket.broadcast.emit("inventario", estado);
+  });
 });
 
 app.use(express.static("./"));

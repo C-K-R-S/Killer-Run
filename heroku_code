@@ -1,0 +1,3 @@
+heroku login -i
+heroku git: remote -a rocky-anchorage-08006
+git push heroku main

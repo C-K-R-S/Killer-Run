@@ -46,6 +46,19 @@ var ARCas;
 var personagem_com_faca;
 var jogador;
 var frame;
+var midias;
+var ice_servers = {
+  iceServers: [
+    {
+      urls: "stun:ifsc.cloud",
+    },
+    {
+      urls: "turns:ifsc.cloud",
+      username: "etorresini",
+      credential: "matrix",
+    },
+  ],
+};
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -354,7 +367,6 @@ cena1.create = function () {
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
-  
 
   // Disparar evento quando jogador entrar na partida
   var physics = this.physics;
@@ -476,21 +488,27 @@ cena1.create = function () {
       player1.y = y;
     }
   });
+
+  socket.on("inventario", (inventario) => {
+    if (inventario.faca) {
+      personagem_com_faca = true;
+    }
+  });
 };
 
 cena1.update = function () {
-  if (vida_mocinha === 0) {
-    ambient.stop();
-    this.scene.start(cena2);
-  }
-
-  if (vida_assassino === 0) {
-    player2.setFrame(6);
-    ambient.stop();
-    this.scene.start(cena3);
-  }
-
   if (jogador === 1) {
+    if (vida_mocinha === 0) {
+      ambient.stop();
+      this.scene.start(cena3);
+    }
+
+    if (vida_assassino === 0) {
+      player2.setFrame(6);
+      ambient.stop();
+      this.scene.start(cena2);
+    }
+
     // Controle do personagem 1: WASD
     if (vida_assassino > 0) {
       if (left.isDown) {
@@ -527,6 +545,17 @@ cena1.update = function () {
       y: player1.body.y + 16,
     });
   } else if (jogador === 2) {
+    if (vida_mocinha === 0) {
+      ambient.stop();
+      this.scene.start(cena2);
+    }
+
+    if (vida_assassino === 0) {
+      player2.setFrame(6);
+      ambient.stop();
+      this.scene.start(cena3);
+    }
+
     // Controle do personagem 2: direcionais
     if (cursors.left.isDown) {
       player2.body.setVelocityX(-100);
@@ -594,15 +623,17 @@ function collectFaca(player2, faca) {
 
   inventory += 1;
   personagem_com_faca = true;
+  console.log("Personagem com faca? %s", personagem_com_faca);
+  socket.emit("inventario", { faca: true });
 }
 
 function acerta_player1(player2, player1) {
   if (personagem_com_faca) {
     vida_assassino--;
-    console.log(vida_assassino);
+    console.log("Vida do assassino: %s", vida_assassino);
   } else {
     vida_mocinha--;
-    console.log(vida_mocinha);
+    console.log("Vida da mocinha: %s", vida_mocinha);
   }
 }
 
