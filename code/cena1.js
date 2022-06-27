@@ -59,6 +59,10 @@ var ice_servers = {
     },
   ],
 };
+var localConnection;
+var remoteConnection;
+var midias;
+var online;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -94,6 +98,8 @@ cena1.preload = function () {
 };
 
 cena1.create = function () {
+  // Preparando o cenário...
+  online = false;
   personagem_com_faca = false;
 
   //musicas
@@ -114,26 +120,12 @@ cena1.create = function () {
   ARCas = map.createLayer("ARCas", tileset, 0, 0);
 
   //spawn
-  player1 = this.physics.add.sprite(850, 50, "player1");
+  player1 = this.physics.add.sprite(900, 50, "player1");
   //player2 = this.physics.add.sprite(50, 530, "player2");
-  player2 = this.physics.add.sprite(800, 50, "player2");
-
-  personagem_com_faca = false;
-
-  // Personagens colidem com os limites da cena
-  //player1.setCollideWorldBounds(true);
-  //player2.setCollideWorldBounds(true);
-
-  // Detecção de colisão: terreno
-  // terreno.setCollisionByProperty({ collides: true });
-  //this.physics.add.collider(player1, terreno, null, null, this);
-  //this.physics.add.collider(player2, terreno, null, null, this);
+  player2 = this.physics.add.sprite(850, 100, "player2");
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
-
-  //this.physics.add.collider(player1, ARCas, null, null, this);
-  //this.physics.add.collider(player2, ARCas, null, null, this);
 
   //spawn faca
   faca = this.physics.add.sprite(250, 220, "faca");
@@ -446,6 +438,9 @@ cena1.create = function () {
     }
 
     // Os dois jogadores estão conectados
+    if (jogadores.primeiro && jogadores.segundo) {
+      online = true;
+    }
     console.log(jogadores);
   });
 
@@ -499,124 +494,131 @@ cena1.create = function () {
 };
 
 cena1.update = function () {
-  if (jogador === 1) {
-    if (vida_mocinha <= 0) {
-      ambient.stop();
-      // socket.emit("fim", { morreu: "mocinha" });
-      this.scene.start(cena3);
-    }
-
-    if (vida_assassino <= 0) {
-      player2.setFrame(6);
-      ambient.stop();
-      this.scene.start(cena2);
-    }
-
-    // Controle do personagem 1: WASD
-    if (vida_assassino > 0) {
-      if (left.isDown) {
-        player1.body.setVelocityX(-100);
-        player1.anims.play("left1", true);
-      } else if (right.isDown) {
-        player1.body.setVelocityX(100);
-        player1.anims.play("right1", true);
-      } else {
+  // Partida só inicia quando os dois jogadores estão online
+  if (online) {
+    if (jogador === 1) {
+      // Controle do personagem 1: WASD
+      if (vida_assassino > 0) {
+        if (left.isDown) {
+          player1.body.setVelocityX(-100);
+          player1.anims.play("left1", true);
+        } else if (right.isDown) {
+          player1.body.setVelocityX(100);
+          player1.anims.play("right1", true);
+        } else {
+          player1.body.setVelocity(0);
+          player1.anims.play("stopped1", true);
+        }
+        if (up.isDown) {
+          player1.body.setVelocityY(-100);
+          player1.anims.play("up1", true);
+        } else if (down.isDown) {
+          player1.body.setVelocityY(100);
+        } else {
+          player1.body.setVelocityY(0);
+        }
+      }
+      if (vida_assassino <= 0) {
         player1.body.setVelocity(0);
-        player1.anims.play("stopped1", true);
+        player1.anims.play("killed1", true);
       }
-      if (up.isDown) {
-        player1.body.setVelocityY(-100);
-        player1.anims.play("up1", true);
-      } else if (down.isDown) {
-        player1.body.setVelocityY(100);
-      } else {
-        player1.body.setVelocityY(0);
+      try {
+        frame = player1.anims.getFrameName();
+      } catch (e) {
+        frame = 0;
       }
-    }
-    if (vida_assassino <= 0) {
-      player1.body.setVelocity(0);
-      player1.anims.play("killed1", true);
-    }
-    try {
-      frame = player1.anims.getFrameName();
-    } catch (e) {
-      frame = 0;
-    }
-    socket.emit("estadoDoJogador", {
-      frame: frame,
-      x: player1.body.x + 16,
-      y: player1.body.y + 16,
-    });
-  } else if (jogador === 2) {
-    if (vida_mocinha <= 0) {
-      ambient.stop();
-      this.scene.start(cena2);
-    }
+      socket.emit("estadoDoJogador", {
+        frame: frame,
+        x: player1.body.x + 16,
+        y: player1.body.y + 16,
+      });
 
-    if (vida_assassino <= 0) {
-      player2.setFrame(6);
-      ambient.stop();
-      this.scene.start(cena3);
-    }
+      if (vida_mocinha <= 0) {
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena3);
+      }
 
-    // Controle do personagem 2: direcionais
-    if (cursors.left.isDown) {
-      player2.body.setVelocityX(-100);
-    } else if (cursors.right.isDown) {
-      player2.body.setVelocityX(100);
-    } else {
-      player2.body.setVelocity(0);
-    }
+      if (vida_assassino <= 0) {
+        player2.setFrame(6);
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena2);
+      }
+    } else if (jogador === 2) {
+      // Controle do personagem 2: direcionais
+      if (cursors.left.isDown) {
+        player2.body.setVelocityX(-100);
+      } else if (cursors.right.isDown) {
+        player2.body.setVelocityX(100);
+      } else {
+        player2.body.setVelocity(0);
+      }
 
-    if (cursors.up.isDown) {
-      player2.body.setVelocityY(-100);
-    } else if (cursors.down.isDown) {
-      player2.body.setVelocityY(100);
-    } else {
-      player2.body.setVelocityY(0);
-    }
+      if (cursors.up.isDown) {
+        player2.body.setVelocityY(-100);
+      } else if (cursors.down.isDown) {
+        player2.body.setVelocityY(100);
+      } else {
+        player2.body.setVelocityY(0);
+      }
 
-    if (cursors.left.isDown) {
-      if (personagem_com_faca) {
-        player2.anims.play("left2-com-faca", true);
+      if (cursors.left.isDown) {
+        if (personagem_com_faca) {
+          player2.anims.play("left2-com-faca", true);
+        } else {
+          player2.anims.play("left2", true);
+        }
+      } else if (cursors.right.isDown) {
+        if (personagem_com_faca) {
+          player2.anims.play("right2-com-faca", true);
+        } else {
+          player2.anims.play("right2", true);
+        }
+      } else if (cursors.up.isDown) {
+        if (personagem_com_faca) {
+          player2.anims.play("up2-com-faca", true);
+        } else {
+          player2.anims.play("up2", true);
+        }
+      } else if (cursors.down.isDown) {
+        if (personagem_com_faca) {
+          player2.anims.play("down2-com-faca", true);
+        } else {
+          player2.anims.play("down2", true);
+        }
       } else {
-        player2.anims.play("left2", true);
+        if (personagem_com_faca) {
+          player2.anims.play("stopped2-com-faca", true);
+        } else {
+          player2.anims.play("stopped2", true);
+        }
       }
-    } else if (cursors.right.isDown) {
-      if (personagem_com_faca) {
-        player2.anims.play("right2-com-faca", true);
-      } else {
-        player2.anims.play("right2", true);
+
+      try {
+        frame = player2.anims.getFrameName();
+      } catch (e) {
+        frame = 0;
       }
-    } else if (cursors.up.isDown) {
-      if (personagem_com_faca) {
-        player2.anims.play("up2-com-faca", true);
-      } else {
-        player2.anims.play("up2", true);
+      socket.emit("estadoDoJogador", {
+        frame: frame,
+        x: player2.body.x + 16,
+        y: player2.body.y + 16,
+      });
+      
+      if (vida_mocinha <= 0) {
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena2);
       }
-    } else if (cursors.down.isDown) {
-      if (personagem_com_faca) {
-        player2.anims.play("down2-com-faca", true);
-      } else {
-        player2.anims.play("down2", true);
-      }
-    } else {
-      if (personagem_com_faca) {
-        player2.anims.play("stopped2-com-faca", true);
-      } else {
-        player2.anims.play("stopped2", true);
+
+      if (vida_assassino <= 0) {
+        player2.setFrame(6);
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena3);
       }
     }
-    try {
-      frame = player2.anims.getFrameName();
-    } catch (e) {
-      frame = 0;
-    }
-    socket.emit("estadoDoJogador", {
-      frame: frame,
-      x: player2.body.x + 16,
-      y: player2.body.y + 16,
-    });
   }
 };
 
