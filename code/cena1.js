@@ -115,7 +115,8 @@ cena1.create = function () {
 
   //spawn
   player1 = this.physics.add.sprite(850, 50, "player1");
-  player2 = this.physics.add.sprite(50, 530, "player2");
+  //player2 = this.physics.add.sprite(50, 530, "player2");
+  player2 = this.physics.add.sprite(800, 50, "player2");
 
   personagem_com_faca = false;
 
@@ -261,6 +262,7 @@ cena1.create = function () {
   //Definir vida vilão
   vida_mocinha = 1;
   vida_assassino = 3;
+
   this.physics.add.collider(player2, player1, acerta_player1, null, this);
 
   // Animação do jogador 1: ficar parado
@@ -498,12 +500,13 @@ cena1.create = function () {
 
 cena1.update = function () {
   if (jogador === 1) {
-    if (vida_mocinha === 0) {
+    if (vida_mocinha <= 0) {
       ambient.stop();
+      // socket.emit("fim", { morreu: "mocinha" });
       this.scene.start(cena3);
     }
 
-    if (vida_assassino === 0) {
+    if (vida_assassino <= 0) {
       player2.setFrame(6);
       ambient.stop();
       this.scene.start(cena2);
@@ -530,7 +533,7 @@ cena1.update = function () {
         player1.body.setVelocityY(0);
       }
     }
-    if (vida_assassino === 0) {
+    if (vida_assassino <= 0) {
       player1.body.setVelocity(0);
       player1.anims.play("killed1", true);
     }
@@ -545,12 +548,12 @@ cena1.update = function () {
       y: player1.body.y + 16,
     });
   } else if (jogador === 2) {
-    if (vida_mocinha === 0) {
+    if (vida_mocinha <= 0) {
       ambient.stop();
       this.scene.start(cena2);
     }
 
-    if (vida_assassino === 0) {
+    if (vida_assassino <= 0) {
       player2.setFrame(6);
       ambient.stop();
       this.scene.start(cena3);
