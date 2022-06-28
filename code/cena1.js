@@ -120,9 +120,9 @@ cena1.create = function () {
   ARCas = map.createLayer("ARCas", tileset, 0, 0);
 
   //spawn
-  player1 = this.physics.add.sprite(900, 50, "player1");
-  //player2 = this.physics.add.sprite(50, 530, "player2");
-  player2 = this.physics.add.sprite(850, 100, "player2");
+  player1 = this.physics.add.sprite(850, 50, "player1");
+  player2 = this.physics.add.sprite(50, 530, "player2");
+ 
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
