@@ -63,6 +63,7 @@ var localConnection;
 var remoteConnection;
 var midias;
 var online;
+var sala;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -122,7 +123,6 @@ cena1.create = function () {
   //spawn
   player1 = this.physics.add.sprite(850, 50, "player1");
   player2 = this.physics.add.sprite(50, 530, "player2");
- 
 
   // Detecção de colisão e disparo de evento: ARCas
   ARCas.setCollisionByProperty({ collides: true });
@@ -302,10 +302,10 @@ cena1.create = function () {
 
   // Direcionais do teclado
   cursors = this.input.keyboard.createCursorKeys();
-  up = this.input.keyboard.addKey("W");
-  down = this.input.keyboard.addKey("S");
-  left = this.input.keyboard.addKey("A");
-  right = this.input.keyboard.addKey("D");
+  //up = this.input.keyboard.addKey("W");
+  //down = this.input.keyboard.addKey("S");
+  //left = this.input.keyboard.addKey("A");
+  //right = this.input.keyboard.addKey("D");
 
   // Mostra há quanto tempo estão jogando (a vida dos jogadores)
   lifeText = this.add.text(20, 24, life, {
@@ -314,7 +314,7 @@ cena1.create = function () {
   });
   lifeText.setScrollFactor(0);
   // Cena (960x960) maior que a tela (800x600)
-  this.cameras.main.setZoom(3);
+  //this.cameras.main.setZoom(3);
   this.cameras.main.setBounds(0, 0, 960, 960);
   this.physics.world.setBounds(0, 0, 960, 960);
 
@@ -361,11 +361,73 @@ cena1.create = function () {
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
+  //socket = io();
+
+  var textMsg = this.add
+    .text(10, 10, "Sala para entrar:", {
+      font: "32px Courier",
+      fill: "#ffffff",
+    })
+    .setScrollFactor(0);
+
+  var textEntry = this.add
+    .text(10, 50, "", {
+      font: "32px Courier",
+      fill: "#ffff00",
+    })
+    .setScrollFactor(0);
 
   // Disparar evento quando jogador entrar na partida
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
+
+  this.input.keyboard.on("keydown", function (event) {
+    if (event.keyCode === 8 && textEntry.text.length > 0) {
+      textEntry.text = textEntry.text.substr(0, textEntry.text.length - 1);
+    } else if (
+      event.keyCode === 32 ||
+      (event.keyCode >= 48 && event.keyCode < 90)
+    ) {
+      textEntry.text += event.key;
+    } else if (event.keyCode === 13) {
+      sala = textEntry.text;
+      console.log("Pedido de entrada na sala %s.", sala);
+      socket.emit("entrar-na-sala", sala);
+      textMsg.setVisible(false);
+      textEntry.setVisible(false);
+      cameras.main.setZoom(3);
+    }
+  });
+
+  socket.on("offer", (socketId, description) => {
+    remoteConnection = new RTCPeerConnection(ice_servers);
+    midias
+      .getTracks()
+      .forEach((track) => remoteConnection.addTrack(track, midias));
+    remoteConnection.onicecandidate = ({ candidate }) => {
+      candidate && socket.emit("candidate", sala, candidate);
+    };
+    remoteConnection.ontrack = ({ streams: [midias] }) => {
+      audio.srcObject = midias;
+    };
+    remoteConnection
+      .setRemoteDescription(description)
+      .then(() => remoteConnection.createAnswer())
+      .then((answer) => remoteConnection.setLocalDescription(answer))
+      .then(() => {
+        socket.emit("answer", sala, remoteConnection.localDescription);
+      });
+  });
+
+  socket.on("answer", (description) => {
+    localConnection.setRemoteDescription(description);
+  });
+
+  socket.on("candidate", (candidate) => {
+    const conn = localConnection || remoteConnection;
+    conn.addIceCandidate(new RTCIceCandidate(candidate));
+  });
 
   socket.on("jogadores", function (jogadores) {
     if (jogadores.primeiro === socket.id) {
@@ -416,8 +478,7 @@ cena1.create = function () {
             .getTracks()
             .forEach((track) => localConnection.addTrack(track, midias));
           localConnection.onicecandidate = ({ candidate }) => {
-            candidate &&
-              socket.emit("candidate", jogadores.primeiro, candidate);
+            candidate && socket.emit("candidate", sala, candidate);
           };
           console.log(midias);
           localConnection.ontrack = ({ streams: [midias] }) => {
@@ -427,11 +488,7 @@ cena1.create = function () {
             .createOffer()
             .then((offer) => localConnection.setLocalDescription(offer))
             .then(() => {
-              socket.emit(
-                "offer",
-                jogadores.primeiro,
-                localConnection.localDescription
-              );
+              socket.emit("offer", sala, localConnection.localDescription);
             });
         })
         .catch((error) => console.log(error));
@@ -450,7 +507,7 @@ cena1.create = function () {
       .getTracks()
       .forEach((track) => remoteConnection.addTrack(track, midias));
     remoteConnection.onicecandidate = ({ candidate }) => {
-      candidate && socket.emit("candidate", socketId, candidate);
+      candidate && socket.emit("candidate", sala, candidate);
     };
     remoteConnection.ontrack = ({ streams: [midias] }) => {
       audio.srcObject = midias;
@@ -460,7 +517,7 @@ cena1.create = function () {
       .then(() => remoteConnection.createAnswer())
       .then((answer) => remoteConnection.setLocalDescription(answer))
       .then(() => {
-        socket.emit("answer", socketId, remoteConnection.localDescription);
+        socket.emit("answer", sala, remoteConnection.localDescription);
       });
   });
 
@@ -499,20 +556,20 @@ cena1.update = function () {
     if (jogador === 1) {
       // Controle do personagem 1: WASD
       if (vida_assassino > 0) {
-        if (left.isDown) {
+        if (cursors.left.isDown) {
           player1.body.setVelocityX(-100);
           player1.anims.play("left1", true);
-        } else if (right.isDown) {
+        } else if (cursors.right.isDown) {
           player1.body.setVelocityX(100);
           player1.anims.play("right1", true);
         } else {
           player1.body.setVelocity(0);
           player1.anims.play("stopped1", true);
         }
-        if (up.isDown) {
+        if (cursors.up.isDown) {
           player1.body.setVelocityY(-100);
           player1.anims.play("up1", true);
-        } else if (down.isDown) {
+        } else if (cursors.down.isDown) {
           player1.body.setVelocityY(100);
         } else {
           player1.body.setVelocityY(0);
@@ -527,7 +584,7 @@ cena1.update = function () {
       } catch (e) {
         frame = 0;
       }
-      socket.emit("estadoDoJogador", {
+      socket.emit("estadoDoJogador", sala, {
         frame: frame,
         x: player1.body.x + 16,
         y: player1.body.y + 16,
@@ -600,12 +657,12 @@ cena1.update = function () {
       } catch (e) {
         frame = 0;
       }
-      socket.emit("estadoDoJogador", {
+      socket.emit("estadoDoJogador", sala, {
         frame: frame,
         x: player2.body.x + 16,
         y: player2.body.y + 16,
       });
-      
+
       if (vida_mocinha <= 0) {
         ambient.stop();
         socket.close();
@@ -629,7 +686,7 @@ function collectFaca(player2, faca) {
   inventory += 1;
   personagem_com_faca = true;
   console.log("Personagem com faca? %s", personagem_com_faca);
-  socket.emit("inventario", { faca: true });
+  socket.emit("inventario", sala, { faca: true });
 }
 
 function acerta_player1(player2, player1) {
