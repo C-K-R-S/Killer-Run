@@ -92,16 +92,21 @@ cena1.preload = function () {
   });
 
   // Tela cheia
-  this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
+  this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
+
+  //Imagem de espera para entrar na sala
+  this.load.image("waiting", "./assets/waiting.jpg")
 };
 
 cena1.create = function () {
   // Preparando o cenário...
   online = false;
   personagem_com_faca = false;
+
+
 
   //musicas
   //lose = this.sound.add("lose");
@@ -302,10 +307,6 @@ cena1.create = function () {
 
   // Direcionais do teclado
   cursors = this.input.keyboard.createCursorKeys();
-  //up = this.input.keyboard.addKey("W");
-  //down = this.input.keyboard.addKey("S");
-  //left = this.input.keyboard.addKey("A");
-  //right = this.input.keyboard.addKey("D");
 
   // Mostra há quanto tempo estão jogando (a vida dos jogadores)
   lifeText = this.add.text(20, 24, life, {
@@ -376,14 +377,20 @@ cena1.create = function () {
       fill: "#ffff00",
     })
     .setScrollFactor(0);
+  
+  
+
 
   // Disparar evento quando jogador entrar na partida
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
+  var waiting = this.add.image(400, 400, "waiting", 0);
+
 
   this.input.keyboard.on("keydown", function (event) {
     if (event.keyCode === 8 && textEntry.text.length > 0) {
+       waiting.setVisible(true);
       textEntry.text = textEntry.text.substr(0, textEntry.text.length - 1);
     } else if (
       event.keyCode === 32 ||
@@ -397,8 +404,11 @@ cena1.create = function () {
       textMsg.setVisible(false);
       textEntry.setVisible(false);
       cameras.main.setZoom(3);
+      waiting.setVisible(false);
+      
     }
   });
+
 
   socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
