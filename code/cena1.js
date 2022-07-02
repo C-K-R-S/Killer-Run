@@ -364,6 +364,15 @@ cena1.create = function () {
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
   //socket = io();
 
+  
+
+
+  // Disparar evento quando jogador entrar na partida
+  var physics = this.physics;
+  var cameras = this.cameras;
+  var time = this.time;
+  var waiting = this.add.image(400, 300, "waiting", 0);
+
   var textMsg = this.add
     .text(10, 10, "Sala para entrar:", {
       font: "32px Courier",
@@ -378,15 +387,6 @@ cena1.create = function () {
     })
     .setScrollFactor(0);
   
-  
-
-
-  // Disparar evento quando jogador entrar na partida
-  var physics = this.physics;
-  var cameras = this.cameras;
-  var time = this.time;
-  var waiting = this.add.image(400, 400, "waiting", 0);
-
 
   this.input.keyboard.on("keydown", function (event) {
     if (event.keyCode === 8 && textEntry.text.length > 0) {
