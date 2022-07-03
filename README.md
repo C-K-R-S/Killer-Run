@@ -11,5 +11,7 @@ Para jogar clique <a href=https://killerrun.ifsc.cloud>aqui</a>.
 <i>Para que o jogo funcione os dois jogadores tem que estar conectados e escolher a mesma sala de partida</i>
 </b>
 </p>
+<div>
+<big> <a href= https://github.com/C-K-R-S/Killer-Run/tree/main/code>Código fonte do jogo</a></big>
 <img src=https://seenonceleb.com/wp-content/uploads/2019/06/The-mask-of-Ghostface-joker-in-the-movie-Scary-movie-Movie.jpg>
 </div>
