@@ -1,3 +1,6 @@
+
+Criar conta no heroku
 heroku login -i
-heroku git: remote -a rocky-anchorage-08006
+git remote -v
+heroku git:remote -a rocky-anchorage-08006  (caso não tenha um link atrelado ao heroku)
 git push heroku main
