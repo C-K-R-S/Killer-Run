@@ -257,7 +257,7 @@ cena1.create = function () {
   });
 
   //Definir vida vilão
-  vida_mocinha = 1;
+  vida_mocinha = 3;
   vida_assassino = 3;
 
   this.physics.add.collider(player2, player1, acerta_player1, null, this);
@@ -556,6 +556,7 @@ cena1.create = function () {
   socket.on("inventario", (inventario) => {
     if (inventario.faca) {
       personagem_com_faca = true;
+  
     }
   });
 };
@@ -680,7 +681,6 @@ cena1.update = function () {
       }
 
       if (vida_assassino <= 0) {
-        player2.setFrame(6);
         ambient.stop();
         socket.close();
         this.scene.start(cena3);
@@ -701,6 +701,7 @@ function collectFaca(player2, faca) {
 
 function acerta_player1(player2, player1) {
   if (personagem_com_faca) {
+    vida_mocinha === 10000;
     vida_assassino--;
     console.log("Vida do assassino: %s", vida_assassino);
   } else {
