@@ -11,5 +11,5 @@ Para jogar clique <a href="killerrun.ifsc.cloud">aqui</a>.
 <i>Para que o jogo funcione os dois jogadores tem que estar conectados e escolher a mesma sala de partida</i>
 </b>
 </p>
-<img src=https://image.pngaaa.com/886/212886-middle.png>
+<img src=https://seenonceleb.com/wp-content/uploads/2019/06/The-mask-of-Ghostface-joker-in-the-movie-Scary-movie-Movie.jpg>
 </div>
