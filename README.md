@@ -1,4 +1,5 @@
 ### KILLER RUN
+<hr>
 Wazzup!!! Seja bem vindo ao nosso jogo.
 <div>
 <p>
