@@ -364,12 +364,6 @@ cena1.create = function () {
     this
   );
 
-  botaoum = this.add.image(80, 300, "um").setInteractive();
-
-    botaoSala1.on("pointerdown", function () {
-      sala = 1;
-      socket.emit("entrar-Na-Sala", sala);
-    });
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
@@ -383,6 +377,7 @@ cena1.create = function () {
   var cameras = this.cameras;
   var time = this.time;
   var waiting = this.add.image(400, 300, "waiting", 0);
+
 
   var textMsg = this.add
     .text(10, 10, "Sala para entrar:", {
@@ -477,6 +472,7 @@ cena1.create = function () {
     } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
+
 
       // Personagens colidem com os limites da cena
       player2.setCollideWorldBounds(true);
