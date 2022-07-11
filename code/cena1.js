@@ -65,7 +65,9 @@ const audio = document.querySelector("audio");
 var midias;
 var online;
 var sala;
-var botaoum;
+var botao1;
+var botao2;
+var botao3;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -93,7 +95,7 @@ cena1.preload = function () {
     frameHeight: 16,
   });
 
-  this.load.image("um", "./assets/salaum.png");
+  this.load.image("sala1", "./assets/voltar.png");
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
@@ -378,42 +380,30 @@ cena1.create = function () {
   var time = this.time;
   var waiting = this.add.image(400, 300, "waiting", 0);
 
+botao1 = this.add.image(100, 300, "sala1").setInteractive();
+botao2 = this.add.image(300, 300, "sala2").setInteractive();
+botao3 = this.add.image(700, 300, "sala3").setInteractive();
 
-  var textMsg = this.add
-    .text(10, 10, "Sala para entrar:", {
-      font: "32px Courier",
-      fill: "#ffffff",
-    })
-    .setScrollFactor(0);
-
-  var textEntry = this.add
-    .text(10, 50, "", {
-      font: "32px Courier",
-      fill: "#ffff00",
-    })
-    .setScrollFactor(0);
+botao1.on("pointerdown", function () {
+  sala = 1;
+  socket.emit("entrar-na-sala", sala);
+  cameras.main.setZoom(3);
+  waiting.setVisible(false);
+});
+botao2.on("pointerdown", function () {
+  sala = 2;
+  socket.emit("entrar-na-sala", sala);
+  cameras.main.setZoom(3);
+  waiting.setVisible(false);
+});
+botao3.on("pointerdown", function () {
+  sala = 3;
+  socket.emit("entrar-na-sala", sala);
+  cameras.main.setZoom(3);
+  waiting.setVisible(false);
+});
   
 
-  this.input.keyboard.on("keydown", function (event) {
-    if (event.keyCode === 8 && textEntry.text.length > 0) {
-       waiting.setVisible(true);
-      textEntry.text = textEntry.text.substr(0, textEntry.text.length - 1);
-    } else if (
-      event.keyCode === 32 ||
-      (event.keyCode >= 48 && event.keyCode < 90)
-    ) {
-      textEntry.text += event.key;
-    } else if (event.keyCode === 13) {
-      sala = textEntry.text;
-      console.log("Pedido de entrada na sala %s.", sala);
-      socket.emit("entrar-na-sala", sala);
-      textMsg.setVisible(false);
-      textEntry.setVisible(false);
-      cameras.main.setZoom(3);
-      waiting.setVisible(false);
-      
-    }
-  });
 
 
   socket.on("offer", (socketId, description) => {
