@@ -65,6 +65,7 @@ const audio = document.querySelector("audio");
 var midias;
 var online;
 var sala;
+var botaoum;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -91,6 +92,8 @@ cena1.preload = function () {
     frameWidth: 16,
     frameHeight: 16,
   });
+
+  this.load.image("um", "./assets/salaum.png");
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
@@ -360,6 +363,13 @@ cena1.create = function () {
     },
     this
   );
+
+  botaoum = this.add.image(80, 300, "um").setInteractive();
+
+    botaoSala1.on("pointerdown", function () {
+      sala = 1;
+      socket.emit("entrar-Na-Sala", sala);
+    });
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
