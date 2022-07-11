@@ -103,6 +103,11 @@ cena1.preload = function () {
   this.load.image("sala4", "./assets/sala4.png");
   this.load.image("sala5", "./assets/sala5.png");
 
+  this.load.image("baixo", "./assets/baixo.png");
+  this.load.image("direita", "./assets/direita.png");
+  this.load.image("esquerda", "./assets/esquerda.png");
+  this.load.image("direita", "./assets/direita.png");
+
   // Tela cheia
   this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
     frameWidth: 64,
@@ -334,7 +339,8 @@ cena1.create = function () {
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
-    .image(800 - 16, 16, "fullscreen", 0)
+    .image(530, 280, "fullscreen", 0)
+    .setScale(0.5)
     .setOrigin(1, 0)
     .setInteractive()
     .setScrollFactor(0);
