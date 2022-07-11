@@ -383,24 +383,31 @@ cena1.create = function () {
 botao1 = this.add.image(100, 300, "sala1").setInteractive();
 botao2 = this.add.image(300, 300, "sala2").setInteractive();
 botao3 = this.add.image(700, 300, "sala3").setInteractive();
-
+  function desaparecerbotaosala() {
+    botao1.setVisible(false);
+    botao2.setVisible(false);
+    botao3.setVisible(false);
+}
 botao1.on("pointerdown", function () {
   sala = 1;
   socket.emit("entrar-na-sala", sala);
   cameras.main.setZoom(3);
   waiting.setVisible(false);
+  desaparecerbotaosala();
 });
 botao2.on("pointerdown", function () {
   sala = 2;
   socket.emit("entrar-na-sala", sala);
   cameras.main.setZoom(3);
   waiting.setVisible(false);
+  desaparecerbotaosala();
 });
 botao3.on("pointerdown", function () {
   sala = 3;
   socket.emit("entrar-na-sala", sala);
   cameras.main.setZoom(3);
   waiting.setVisible(false);
+  desaparecerbotaosala();
 });
   
 
