@@ -61,6 +61,7 @@ var ice_servers = {
 };
 var localConnection;
 var remoteConnection;
+const audio = document.querySelector("audio");
 var midias;
 var online;
 var sala;
