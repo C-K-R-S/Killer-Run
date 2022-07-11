@@ -68,6 +68,8 @@ var sala;
 var botao1;
 var botao2;
 var botao3;
+var botao4;
+var botao5;
 
 cena1.preload = function () {
   //carregamento de todos os sons do game
@@ -95,7 +97,11 @@ cena1.preload = function () {
     frameHeight: 16,
   });
 
-  this.load.image("sala1", "./assets/voltar.png");
+  this.load.image("sala1", "./assets/sala1.png");
+  this.load.image("sala2", "./assets/sala2.png");
+  this.load.image("sala3", "./assets/sala3.png");
+  this.load.image("sala4", "./assets/sala4.png");
+  this.load.image("sala5", "./assets/sala5.png");
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
@@ -104,15 +110,13 @@ cena1.preload = function () {
   });
 
   //Imagem de espera para entrar na sala
-  this.load.image("waiting", "./assets/waiting.jpg")
+  this.load.image("waiting", "./assets/waiting.jpg");
 };
 
 cena1.create = function () {
   // Preparando o cenário...
   online = false;
   personagem_com_faca = false;
-
-
 
   //musicas
   //lose = this.sound.add("lose");
@@ -366,13 +370,9 @@ cena1.create = function () {
     this
   );
 
-
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
   //socket = io();
-
-  
-
 
   // Disparar evento quando jogador entrar na partida
   var physics = this.physics;
@@ -380,38 +380,54 @@ cena1.create = function () {
   var time = this.time;
   var waiting = this.add.image(400, 300, "waiting", 0);
 
-botao1 = this.add.image(100, 300, "sala1").setInteractive();
-botao2 = this.add.image(300, 300, "sala2").setInteractive();
-botao3 = this.add.image(700, 300, "sala3").setInteractive();
+  botao1 = this.add.image(100, 600, "sala1").setInteractive();
+  botao2 = this.add.image(250, 600, "sala2").setInteractive();
+  botao3 = this.add.image(400, 600, "sala3").setInteractive();
+  botao4 = this.add.image(550, 600, "sala4").setInteractive();
+  botao5 = this.add.image(700, 600, "sala5").setInteractive();
   function desaparecerbotaosala() {
     botao1.setVisible(false);
     botao2.setVisible(false);
     botao3.setVisible(false);
-}
-botao1.on("pointerdown", function () {
-  sala = 1;
-  socket.emit("entrar-na-sala", sala);
-  cameras.main.setZoom(3);
-  waiting.setVisible(false);
-  desaparecerbotaosala();
-});
-botao2.on("pointerdown", function () {
-  sala = 2;
-  socket.emit("entrar-na-sala", sala);
-  cameras.main.setZoom(3);
-  waiting.setVisible(false);
-  desaparecerbotaosala();
-});
-botao3.on("pointerdown", function () {
-  sala = 3;
-  socket.emit("entrar-na-sala", sala);
-  cameras.main.setZoom(3);
-  waiting.setVisible(false);
-  desaparecerbotaosala();
-});
-  
-
-
+    botao3.setVisible(false);
+    botao4.setVisible(false);
+    botao5.setVisible(false);
+  }
+  botao1.on("pointerdown", function () {
+    sala = 1;
+    socket.emit("entrar-na-sala", sala);
+    cameras.main.setZoom(3);
+    waiting.setVisible(false);
+    desaparecerbotaosala();
+  });
+  botao2.on("pointerdown", function () {
+    sala = 2;
+    socket.emit("entrar-na-sala", sala);
+    cameras.main.setZoom(3);
+    waiting.setVisible(false);
+    desaparecerbotaosala();
+  });
+  botao3.on("pointerdown", function () {
+    sala = 3;
+    socket.emit("entrar-na-sala", sala);
+    cameras.main.setZoom(3);
+    waiting.setVisible(false);
+    desaparecerbotaosala();
+  });
+  botao4.on("pointerdown", function () {
+    sala = 4;
+    socket.emit("entrar-na-sala", sala);
+    cameras.main.setZoom(3);
+    waiting.setVisible(false);
+    desaparecerbotaosala();
+  });
+  botao5.on("pointerdown", function () {
+    sala = 5;
+    socket.emit("entrar-na-sala", sala);
+    cameras.main.setZoom(3);
+    waiting.setVisible(false);
+    desaparecerbotaosala();
+  });
 
   socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
@@ -469,7 +485,6 @@ botao3.on("pointerdown", function () {
     } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
-
 
       // Personagens colidem com os limites da cena
       player2.setCollideWorldBounds(true);
@@ -560,7 +575,6 @@ botao3.on("pointerdown", function () {
   socket.on("inventario", (inventario) => {
     if (inventario.faca) {
       personagem_com_faca = true;
-  
     }
   });
 };
