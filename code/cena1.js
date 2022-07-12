@@ -114,6 +114,24 @@ cena1.preload = function () {
     frameHeight: 64,
   });
 
+  // D-pad
+  this.load.spritesheet("esquerda", "assets/esquerda.png", {
+    frameWidth: 64,
+    frameHeight: 64,
+  });
+  this.load.spritesheet("direita", "assets/direita.png", {
+    frameWidth: 64,
+    frameHeight: 64,
+  });
+  this.load.spritesheet("cima", "assets/cima.png", {
+    frameWidth: 64,
+    frameHeight: 64,
+  });
+  this.load.spritesheet("baixo", "assets/baixo.png", {
+    frameWidth: 64,
+    frameHeight: 64,
+  });
+
   //Imagem de espera para entrar na sala
   this.load.image("waiting", "./assets/waiting.jpg");
 };
