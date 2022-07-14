@@ -339,7 +339,9 @@ cena1.create = function () {
   });
 
   // Direcionais do teclado
-  cursors = this.input.keyboard.createCursorKeys();
+  //cursors = this.input.keyboard.createCursorKeys();
+
+  pointer = this.input.addPointer(1);
 
   // Mostra há quanto tempo estão jogando (a vida dos jogadores)
   lifeText = this.add.text(20, 24, life, {
@@ -393,6 +395,26 @@ cena1.create = function () {
     },
     this
   );
+
+  // D-pad
+  var esquerda = this.add
+    .image(50, 550, "esquerda", 0)
+    .setInteractive()
+    .setScrollFactor(0);
+  var direita = this.add
+    .image(125, 550, "direita", 0)
+    .setInteractive()
+    .setScrollFactor(0);
+  var cima = this.add
+    .image(750, 475, "cima", 0)
+    .setInteractive()
+    .setScrollFactor(0);
+  var baixo = this.add
+    .image(750, 550, "baixo", 0)
+    .setInteractive()
+    .setScrollFactor(0);
+
+  
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
@@ -500,6 +522,67 @@ cena1.create = function () {
       // Câmera seguindo o personagem 1
       cameras.main.startFollow(player1);
 
+      // D-pad: para cada direção já os eventos
+      // para tocar a tela ("pointerover")
+      // e ao terminar essa interação ("pointerout")
+      esquerda.on("pointerover", () => {
+        if (online){
+          esquerda.setFrame(1);
+          player1.setVelocityX(-160);
+          player1.anims.play("left1", true);
+        }
+      });
+      esquerda.on("pointerout", () => {
+        if (online) {
+          esquerda.setFrame(0);
+          player1.setVelocityX(0);
+          player1.anims.play("stopped1", true);
+        }
+      });
+      direita.on("pointerover", () => {
+        if (online) {
+          direita.setFrame(1);
+          player1.setVelocityX(160);
+          player1.anims.play("right1", true);
+        }
+      });
+      direita.on("pointerout", () => {
+        if (online) {
+          direita.setFrame(0);
+          player1.setVelocityX(0);
+          player1.anims.play("stopped1", true);
+        }
+      });
+      cima.on("pointerover", () => {
+        if (online) {
+          cima.setFrame(1);
+          player1.setVelocityY(-160);
+          player1.anims.play("right1", true);
+        }
+      });
+      cima.on("pointerout", () => {
+        if (online) {
+          cima.setFrame(0);
+          player1.setVelocityY(0);
+          player1.anims.play("stopped1", true);
+        }
+      });
+      baixo.on("pointerover", () => {
+        if (online){
+          baixo.setFrame(1);
+          player1.setVelocityY(160);
+          player1.anims.play("right1", true);
+        }
+      });
+      baixo.on("pointerout", () => {
+        if (online) {
+          baixo.setFrame(0);
+          player1.setVelocityY(0);
+          player1.anims.play("stopped1", true);
+        }
+      });
+
+
       navigator.mediaDevices
         .getUserMedia({ video: false, audio: true })
         .then((stream) => {
@@ -521,6 +604,113 @@ cena1.create = function () {
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
+
+      // D-pad: para cada direção já os eventos
+      // para tocar a tela ("pointerover")
+      // e ao terminar essa interação ("pointerout")
+      esquerda.on("pointerover", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            esquerda.setFrame(1);
+            player2.setVelocityX(-160);
+            player2.anims.play("left2-com-faca", true);
+          } else {
+            esquerda.setFrame(1);
+            player2.setVelocityX(-160);
+            player2.anims.play("left2", true);
+          }
+        }
+      });
+      esquerda.on("pointerout", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            esquerda.setFrame(0);
+            player2.setVelocityX(0);
+            player2.anims.play("stopped2-com-faca", true);
+          } else {
+            esquerda.setFrame(0);
+            player2.setVelocityX(0);
+            player2.anims.play("stopped2", true);
+          }
+        }
+      });
+      direita.on("pointerover", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            direita.setFrame(1);
+            player2.setVelocityX(160);
+            player2.anims.play("right2-com-faca", true);
+          } else {
+            direita.setFrame(1);
+            player2.setVelocityX(160);
+            player2.anims.play("right2", true);
+          }
+        }
+      });
+      direita.on("pointerout", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            direita.setFrame(0);
+            player2.setVelocityX(0);
+            player2.anims.play("stopped2-com-faca", true);
+          } else {
+            direita.setFrame(0);
+            player2.setVelocityX(0);
+            player2.anims.play("stopped2", true);
+          }
+        }
+      });
+      cima.on("pointerover", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            cima.setFrame(1);
+            player2.setVelocityY(-160);
+            player2.anims.play("up2-com-faca", true);
+          } else {
+            cima.setFrame(1);
+            player2.setVelocityY(-160);
+            player2.anims.play("up2", true);
+          }
+        }
+      });
+      cima.on("pointerout", () => {
+        if (online) {
+          if (online) {
+            cima.setFrame(0);
+            player2.setVelocityY(0);
+            player2.anims.play("stopped2-com-faca", true);
+          } else {
+            cima.setFrame(0);
+            player2.setVelocityY(0);
+            player2.anims.play("stopped2", true);
+          }
+        }
+      });
+      baixo.on("pointerover", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            baixo.setFrame(1);
+            player2.setVelocityY(160);
+            player2.anims.play("down2-com-faca", true);
+          }
+          baixo.setFrame(1);
+          player2.setVelocityY(160);
+          player2.anims.play("down2", true);
+        }
+      });
+      baixo.on("pointerout", () => {
+        if (online) {
+          if (personagem_com_faca) {
+            baixo.setFrame(0);
+            player2.setVelocityY(0);
+            player2.anims.play("stopped2-com-faca", true);
+          } else {
+            baixo.setFrame(0);
+            player2.setVelocityY(0);
+            player2.anims.play("stopped2", true);
+          }
+        }
+      });
 
       navigator.mediaDevices
         .getUserMedia({ video: false, audio: true })
