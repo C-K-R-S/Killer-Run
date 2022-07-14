@@ -572,14 +572,14 @@ cena1.create = function () {
         if (online){
           baixo.setFrame(1);
           player1.setVelocityY(160);
-          player1.anims.play("down1", true);
+          //player1.anims.play("down1", true);
         }
       });
       baixo.on("pointerout", () => {
         if (online) {
           baixo.setFrame(0);
           player1.setVelocityY(0);
-          player1.anims.play("down1", true);
+        //  player1.anims.play("down1", true);
         }
       });
 
@@ -803,7 +803,7 @@ cena1.update = function () {
     if (jogador === 1) {
       if (vida_assassino > 0) {
         try {
-          frame = player1.anims.currentFrame.index;
+          frame = player1.anims.GetFrameName();
         } catch (e) {
           frame = 0;
         }
@@ -829,7 +829,7 @@ cena1.update = function () {
         // Testa se há animação do oponente,
         // caso contrário envia o primeiro frame (0)
         try {
-          frame = player2.anims.currentFrame.index;
+          frame = player2.anims.GetFrameName();
         } catch (e) {
           frame = 0;
         
