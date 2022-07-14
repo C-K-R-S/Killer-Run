@@ -38,6 +38,7 @@ var faca;
 var physics;
 var time;
 var cameras;
+var camera0;
 var socket;
 var map;
 var tileset;
@@ -102,11 +103,6 @@ cena1.preload = function () {
   this.load.image("sala3", "./assets/sala3.png");
   this.load.image("sala4", "./assets/sala4.png");
   this.load.image("sala5", "./assets/sala5.png");
-
-  this.load.image("baixo", "./assets/baixo.png");
-  this.load.image("direita", "./assets/direita.png");
-  this.load.image("esquerda", "./assets/esquerda.png");
-  this.load.image("direita", "./assets/direita.png");
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "./assets/fullscreen.png", {
@@ -398,21 +394,26 @@ cena1.create = function () {
 
   // D-pad
   var esquerda = this.add
-    .image(50, 550, "esquerda", 0)
+    .image(450, 500, "esquerda", 0)
     .setInteractive()
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+  .setScale(0.5);
+
   var direita = this.add
-    .image(125, 550, "direita", 0)
+    .image(500, 500, "direita", 0)
     .setInteractive()
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+    .setScale(0.5);
   var cima = this.add
-    .image(750, 475, "cima", 0)
+    .image(300, 470, "cima", 0)
     .setInteractive()
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+    .setScale(0.5);
   var baixo = this.add
-    .image(750, 550, "baixo", 0)
+    .image(300, 510, "baixo", 0)
     .setInteractive()
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+    .setScale(0.5);
 
   
 
@@ -557,7 +558,7 @@ cena1.create = function () {
         if (online) {
           cima.setFrame(1);
           player1.setVelocityY(-160);
-          player1.anims.play("right1", true);
+          player1.anims.play("up1", true);
         }
       });
       cima.on("pointerout", () => {
@@ -571,14 +572,14 @@ cena1.create = function () {
         if (online){
           baixo.setFrame(1);
           player1.setVelocityY(160);
-          player1.anims.play("right1", true);
+          player1.anims.play("down1", true);
         }
       });
       baixo.on("pointerout", () => {
         if (online) {
           baixo.setFrame(0);
           player1.setVelocityY(0);
-          player1.anims.play("stopped1", true);
+          player1.anims.play("down1", true);
         }
       });
 
@@ -660,6 +661,7 @@ cena1.create = function () {
           }
         }
       });
+      
       cima.on("pointerover", () => {
         if (online) {
           if (personagem_com_faca) {
@@ -675,7 +677,7 @@ cena1.create = function () {
       });
       cima.on("pointerout", () => {
         if (online) {
-          if (online) {
+          if (personagem_com_faca) {
             cima.setFrame(0);
             player2.setVelocityY(0);
             player2.anims.play("stopped2-com-faca", true);
@@ -692,10 +694,11 @@ cena1.create = function () {
             baixo.setFrame(1);
             player2.setVelocityY(160);
             player2.anims.play("down2-com-faca", true);
+          } else {
+            baixo.setFrame(1);
+            player2.setVelocityY(160);
+            player2.anims.play("down2", true);
           }
-          baixo.setFrame(1);
-          player2.setVelocityY(160);
-          player2.anims.play("down2", true);
         }
       });
       baixo.on("pointerout", () => {
@@ -794,128 +797,59 @@ cena1.create = function () {
 };
 
 cena1.update = function () {
+  let frame;
   // Partida só inicia quando os dois jogadores estão online
   if (online) {
     if (jogador === 1) {
-      // Controle do personagem 1: WASD
       if (vida_assassino > 0) {
-        if (cursors.left.isDown) {
-          player1.body.setVelocityX(-100);
-          player1.anims.play("left1", true);
-        } else if (cursors.right.isDown) {
-          player1.body.setVelocityX(100);
-          player1.anims.play("right1", true);
-        } else {
-          player1.body.setVelocity(0);
-          player1.anims.play("stopped1", true);
+        try {
+          frame = player1.anims.currentFrame.index;
+        } catch (e) {
+          frame = 0;
         }
-        if (cursors.up.isDown) {
-          player1.body.setVelocityY(-100);
-          player1.anims.play("up1", true);
-        } else if (cursors.down.isDown) {
-          player1.body.setVelocityY(100);
-        } else {
-          player1.body.setVelocityY(0);
+        socket.emit("estadoDoJogador", sala, {
+          frame: frame,
+          x: player1.body.x + 16,
+          y: player1.body.y + 16,
+        });
+
+        if (vida_mocinha <= 0) {
+          ambient.stop();
+          socket.close();
+          this.scene.start(cena3);
         }
-      }
-      if (vida_assassino <= 0) {
-        player1.body.setVelocity(0);
-        player1.anims.play("killed1", true);
-      }
-      try {
-        frame = player1.anims.getFrameName();
-      } catch (e) {
-        frame = 0;
-      }
-      socket.emit("estadoDoJogador", sala, {
-        frame: frame,
-        x: player1.body.x + 16,
-        y: player1.body.y + 16,
-      });
 
-      if (vida_mocinha <= 0) {
-        ambient.stop();
-        socket.close();
-        this.scene.start(cena3);
-      }
-
-      if (vida_assassino <= 0) {
-        player2.setFrame(6);
-        ambient.stop();
-        socket.close();
-        this.scene.start(cena2);
-      }
-    } else if (jogador === 2) {
-      // Controle do personagem 2: direcionais
-      if (cursors.left.isDown) {
-        player2.body.setVelocityX(-100);
-      } else if (cursors.right.isDown) {
-        player2.body.setVelocityX(100);
-      } else {
-        player2.body.setVelocity(0);
-      }
-
-      if (cursors.up.isDown) {
-        player2.body.setVelocityY(-100);
-      } else if (cursors.down.isDown) {
-        player2.body.setVelocityY(100);
-      } else {
-        player2.body.setVelocityY(0);
-      }
-
-      if (cursors.left.isDown) {
-        if (personagem_com_faca) {
-          player2.anims.play("left2-com-faca", true);
-        } else {
-          player2.anims.play("left2", true);
+        if (vida_assassino <= 0) {
+          player2.setFrame(6);
+          ambient.stop();
+          socket.close();
+          this.scene.start(cena2);
         }
-      } else if (cursors.right.isDown) {
-        if (personagem_com_faca) {
-          player2.anims.play("right2-com-faca", true);
-        } else {
-          player2.anims.play("right2", true);
+      } else if (jogador === 2) {
+        // Testa se há animação do oponente,
+        // caso contrário envia o primeiro frame (0)
+        try {
+          frame = player2.anims.currentFrame.index;
+        } catch (e) {
+          frame = 0;
+        
         }
-      } else if (cursors.up.isDown) {
-        if (personagem_com_faca) {
-          player2.anims.play("up2-com-faca", true);
-        } else {
-          player2.anims.play("up2", true);
+        socket.emit("estadoDoJogador", sala, {
+          frame: frame,
+          x: player2.body.x + 16,
+          y: player2.body.y + 16,
+        });
+        if (vida_mocinha <= 0) {
+          ambient.stop();
+          socket.close();
+          this.scene.start(cena2);
         }
-      } else if (cursors.down.isDown) {
-        if (personagem_com_faca) {
-          player2.anims.play("down2-com-faca", true);
-        } else {
-          player2.anims.play("down2", true);
-        }
-      } else {
-        if (personagem_com_faca) {
-          player2.anims.play("stopped2-com-faca", true);
-        } else {
-          player2.anims.play("stopped2", true);
-        }
-      }
 
-      try {
-        frame = player2.anims.getFrameName();
-      } catch (e) {
-        frame = 0;
-      }
-      socket.emit("estadoDoJogador", sala, {
-        frame: frame,
-        x: player2.body.x + 16,
-        y: player2.body.y + 16,
-      });
-
-      if (vida_mocinha <= 0) {
-        ambient.stop();
-        socket.close();
-        this.scene.start(cena2);
-      }
-
-      if (vida_assassino <= 0) {
-        ambient.stop();
-        socket.close();
-        this.scene.start(cena3);
+        if (vida_assassino <= 0) {
+          ambient.stop();
+          socket.close();
+          this.scene.start(cena3);
+        }
       }
     }
   }
