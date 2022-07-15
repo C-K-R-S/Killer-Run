@@ -803,7 +803,7 @@ cena1.update = function () {
     if (jogador === 1) {
       if (vida_assassino > 0) {
         try {
-          frame = player1.anims.GetFrameName()
+          frame = player1.anims.getFrameName()
         } catch (e) {
           frame = 0;
         }
@@ -829,7 +829,7 @@ cena1.update = function () {
         // Testa se há animação do oponente,
         // caso contrário envia o primeiro frame (0)
         try {
-          frame = player2.anims.GetFrameName();
+          frame = player2.anims.getFrameName();
         } catch (e) {
           frame = 0;
         
