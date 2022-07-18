@@ -397,7 +397,7 @@ cena1.create = function () {
     .image(450, 500, "esquerda", 0)
     .setInteractive()
     .setScrollFactor(0)
-  .setScale(0.5);
+    .setScale(0.5);
 
   var direita = this.add
     .image(500, 500, "direita", 0)
@@ -415,7 +415,7 @@ cena1.create = function () {
     .setScrollFactor(0)
     .setScale(0.5);
 
-  
+
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
@@ -527,7 +527,7 @@ cena1.create = function () {
       // para tocar a tela ("pointerover")
       // e ao terminar essa interação ("pointerout")
       esquerda.on("pointerover", () => {
-        if (online){
+        if (online) {
           esquerda.setFrame(1);
           player1.setVelocityX(-160);
           player1.anims.play("left1", true);
@@ -569,7 +569,7 @@ cena1.create = function () {
         }
       });
       baixo.on("pointerover", () => {
-        if (online){
+        if (online) {
           baixo.setFrame(1);
           player1.setVelocityY(160);
           player1.anims.play("down1", true);
@@ -661,7 +661,7 @@ cena1.create = function () {
           }
         }
       });
-      
+
       cima.on("pointerover", () => {
         if (online) {
           if (personagem_com_faca) {
@@ -825,31 +825,30 @@ cena1.update = function () {
           socket.close();
           this.scene.start(cena2);
         }
-      } else if (jogador === 2) {
-        // Testa se há animação do oponente,
-        // caso contrário envia o primeiro frame (0)
-        try {
-          frame = player2.anims.getFrameName();
-        } catch (e) {
-          frame = 0;
-        
-        }
-        socket.emit("estadoDoJogador", sala, {
-          frame: frame,
-          x: player2.body.x + 16,
-          y: player2.body.y + 16,
-        });
-        if (vida_mocinha <= 0) {
-          ambient.stop();
-          socket.close();
-          this.scene.start(cena2);
-        }
+      }
+    } else if (jogador === 2) {
+      // Testa se há animação do oponente,
+      // caso contrário envia o primeiro frame (0)
+      try {
+        frame = player2.anims.getFrameName();
+      } catch (e) {
+        frame = 0;
+      }
+      socket.emit("estadoDoJogador", sala, {
+        frame: frame,
+        x: player2.body.x + 16,
+        y: player2.body.y + 16,
+      });
+      if (vida_mocinha <= 0) {
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena2);
+      }
 
-        if (vida_assassino <= 0) {
-          ambient.stop();
-          socket.close();
-          this.scene.start(cena3);
-        }
+      if (vida_assassino <= 0) {
+        ambient.stop();
+        socket.close();
+        this.scene.start(cena3);
       }
     }
   }
