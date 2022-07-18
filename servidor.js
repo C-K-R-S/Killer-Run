@@ -14,12 +14,14 @@ io.on("connection", (socket) => {
   socket.on("entrar-na-sala", (sala) => {
     socket.join(sala);
     var jogadores = {};
-    if (io.sockets.adapter.rooms.get(sala).size === 1) { // 1 jogador
+    if (io.sockets.adapter.rooms.get(sala).size === 1) {
+      // 1 jogador
       jogadores = {
         primeiro: socket.id,
         segundo: undefined,
       };
-    } else if (io.sockets.adapter.rooms.get(sala).size === 2) { // 2 jogadores
+    } else if (io.sockets.adapter.rooms.get(sala).size === 2) {
+      // 2 jogadores
       let [primeiro] = io.sockets.adapter.rooms.get(sala);
       jogadores = {
         primeiro: primeiro,
@@ -52,6 +54,9 @@ io.on("connection", (socket) => {
   // Envio do estado do outro jogador
   socket.on("estadoDoJogador", (sala, estado) => {
     socket.broadcast.to(sala).emit("desenharOutroJogador", estado);
+  });
+  socket.on("fim-de-jogo", (sala, vencedor) => {
+    socket.broadcast.to(sala).emit("fim-de-jogo", vencedor);
   });
 });
 

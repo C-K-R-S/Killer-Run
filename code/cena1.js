@@ -286,8 +286,8 @@ cena1.create = function () {
   });
 
   //Definir vida vilão
-  vida_mocinha = 3;
-  vida_assassino = 3;
+  vida_mocinha = 1;
+  vida_assassino = 1;
 
   this.physics.add.collider(player2, player1, acerta_player1, null, this);
 
@@ -297,16 +297,6 @@ cena1.create = function () {
     frames: this.anims.generateFrameNumbers("player1", {
       start: 0,
       end: 0,
-    }),
-    frameRate: 5,
-    repeat: -1,
-  });
-  // Animação do jogador 1: ficar parado
-  this.anims.create({
-    key: "killed1",
-    frames: this.anims.generateFrameNumbers("player1", {
-      start: 6,
-      end: 6,
     }),
     frameRate: 5,
     repeat: -1,
@@ -414,8 +404,6 @@ cena1.create = function () {
     .setInteractive()
     .setScrollFactor(0)
     .setScale(0.5);
-
-
 
   // Conectar no servidor via WebSocket
   socket = io("https://rocky-anchorage-08006.herokuapp.com");
@@ -582,7 +570,6 @@ cena1.create = function () {
           player1.anims.play("down1", true);
         }
       });
-
 
       navigator.mediaDevices
         .getUserMedia({ video: false, audio: true })
@@ -794,6 +781,16 @@ cena1.create = function () {
       personagem_com_faca = true;
     }
   });
+
+  socket.on("fim-de-jogo", (vencedor) => {
+    if ((vencedor === "mocinha")) {
+      this.scene.start(cena3);
+      socket.close();
+    } else if (vencedor === "assassino") {
+      this.scene.start(cena2);
+      socket.close();
+    }
+  });
 };
 
 cena1.update = function () {
@@ -803,7 +800,7 @@ cena1.update = function () {
     if (jogador === 1) {
       if (vida_assassino > 0) {
         try {
-          frame = player1.anims.getFrameName()
+          frame = player1.anims.getFrameName();
         } catch (e) {
           frame = 0;
         }
@@ -814,13 +811,14 @@ cena1.update = function () {
         });
 
         if (vida_mocinha <= 0) {
+          socket.emit("fim-de-jogo", sala, "assassino");
           ambient.stop();
           socket.close();
           this.scene.start(cena3);
         }
 
         if (vida_assassino <= 0) {
-          player2.setFrame(6);
+          socket.emit("fim-de-jogo", sala, "mocinha");
           ambient.stop();
           socket.close();
           this.scene.start(cena2);
@@ -840,12 +838,14 @@ cena1.update = function () {
         y: player2.body.y + 16,
       });
       if (vida_mocinha <= 0) {
+        socket.emit("fim-de-jogo", sala, "assassino");
         ambient.stop();
         socket.close();
         this.scene.start(cena2);
       }
 
       if (vida_assassino <= 0) {
+        socket.emit("fim-de-jogo", sala, "assassino");
         ambient.stop();
         socket.close();
         this.scene.start(cena3);
@@ -866,7 +866,6 @@ function collectFaca(player2, faca) {
 
 function acerta_player1(player2, player1) {
   if (personagem_com_faca) {
-    vida_mocinha === 10000;
     vida_assassino--;
     console.log("Vida do assassino: %s", vida_assassino);
   } else {
