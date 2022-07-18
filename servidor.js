@@ -55,8 +55,10 @@ io.on("connection", (socket) => {
   socket.on("estadoDoJogador", (sala, estado) => {
     socket.broadcast.to(sala).emit("desenharOutroJogador", estado);
   });
+
   socket.on("fim-de-jogo", (sala, vencedor) => {
     socket.broadcast.to(sala).emit("fim-de-jogo", vencedor);
+    console.log(vencedor)
   });
 });
 

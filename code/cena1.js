@@ -783,7 +783,7 @@ cena1.create = function () {
   });
 
   socket.on("fim-de-jogo", (vencedor) => {
-    if ((vencedor === "mocinha")) {
+    if (vencedor === "mocinha") {
       this.scene.start(cena3);
       socket.close();
     } else if (vencedor === "assassino") {
@@ -813,15 +813,16 @@ cena1.update = function () {
         if (vida_mocinha <= 0) {
           socket.emit("fim-de-jogo", sala, "assassino");
           ambient.stop();
-          socket.close();
           this.scene.start(cena3);
+          socket.close();
+
         }
 
         if (vida_assassino <= 0) {
           socket.emit("fim-de-jogo", sala, "mocinha");
           ambient.stop();
-          socket.close();
           this.scene.start(cena2);
+          socket.close();
         }
       }
     } else if (jogador === 2) {
@@ -840,15 +841,15 @@ cena1.update = function () {
       if (vida_mocinha <= 0) {
         socket.emit("fim-de-jogo", sala, "assassino");
         ambient.stop();
-        socket.close();
         this.scene.start(cena2);
+        socket.close();
       }
 
       if (vida_assassino <= 0) {
         socket.emit("fim-de-jogo", sala, "assassino");
         ambient.stop();
-        socket.close();
         this.scene.start(cena3);
+        socket.close();
       }
     }
   }
