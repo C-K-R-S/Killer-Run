@@ -48,9 +48,6 @@ io.on("connection", (socket) => {
     socket.broadcast.to(sala).emit("candidate", signal);
   });
 
-  // Disparar evento quando jogador sair da partida
-  socket.on("disconnect", () => {});
-
   // Envio do estado do outro jogador
   socket.on("estadoDoJogador", (sala, estado) => {
     socket.broadcast.to(sala).emit("desenharOutroJogador", estado);
@@ -58,8 +55,11 @@ io.on("connection", (socket) => {
 
   socket.on("fim-de-jogo", (sala, vencedor) => {
     socket.broadcast.to(sala).emit("fim-de-jogo", vencedor);
-    console.log(vencedor)
+    console.log(vencedor);
   });
+
+  // Disparar evento quando jogador sair da partida
+  socket.on("disconnect", () => {});
 });
 
 // Abrir porta para HTTPS/WSS
