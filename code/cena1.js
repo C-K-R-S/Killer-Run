@@ -782,7 +782,7 @@ cena1.create = function () {
     }
   });
 
-  socket.on("fim-de-jogo", (vencedor) => {
+  socket.on("fim-de-jogo", ({ vencedor }) => {
     if (vencedor === "mocinha") {
       this.scene.start(cena3);
       socket.close();
@@ -809,21 +809,19 @@ cena1.update = function () {
           x: player1.body.x + 16,
           y: player1.body.y + 16,
         });
+      }
+      if (vida_mocinha <= 0) {
+        socket.emit("fim-de-jogo", sala, { vencedor: "assassino" });
+        ambient.stop();
+        this.scene.start(cena3);
+        socket.close();
+      }
 
-        if (vida_mocinha <= 0) {
-          socket.emit("fim-de-jogo", sala, "assassino");
-          ambient.stop();
-          this.scene.start(cena3);
-          socket.close();
-
-        }
-
-        if (vida_assassino <= 0) {
-          socket.emit("fim-de-jogo", sala, "mocinha");
-          ambient.stop();
-          this.scene.start(cena2);
-          socket.close();
-        }
+      if (vida_assassino <= 0) {
+        socket.emit("fim-de-jogo", sala, { vencedor: "mocinha" });
+        ambient.stop();
+        this.scene.start(cena2);
+        socket.close();
       }
     } else if (jogador === 2) {
       // Testa se há animação do oponente,
@@ -838,15 +836,16 @@ cena1.update = function () {
         x: player2.body.x + 16,
         y: player2.body.y + 16,
       });
+
       if (vida_mocinha <= 0) {
-        socket.emit("fim-de-jogo", sala, "assassino");
+        socket.emit("fim-de-jogo", sala, { vencedor: "assassino" });
         ambient.stop();
         this.scene.start(cena2);
         socket.close();
       }
 
       if (vida_assassino <= 0) {
-        socket.emit("fim-de-jogo", sala, "assassino");
+        socket.emit("fim-de-jogo", sala, { vencedor: "mocinha" });
         ambient.stop();
         this.scene.start(cena3);
         socket.close();
