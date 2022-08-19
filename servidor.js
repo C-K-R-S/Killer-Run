@@ -3,7 +3,10 @@ const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server, {
   cors: {
-    origins: ["http://killerrun.ifsc.cloud/", "https://*.gitpod.io"],
+    origins: [
+      "https://rocky-anchorage-08006.herokuapp.com",
+      "https://*.gitpod.io",
+    ],
   },
 });
 const PORT = process.env.PORT || 3000;
